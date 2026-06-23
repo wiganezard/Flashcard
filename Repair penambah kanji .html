@@ -1,0 +1,1538 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Flashcard Minna no Nihongo — Bab 1–25</title>
+<style>
+:root{
+  --bg:#0b1220;--panel:#111a2c;--muted:#8aa0c5;--accent:#3b82f6;
+  --ok:#10b981;--warn:#f59e0b;--text:#e8eefc;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;background:linear-gradient(180deg,#081020,#0b1326 40%,#0e1730);
+  color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+}
+.wrap{max-width:720px;margin:auto;padding:14px;padding-bottom:calc(14px + env(safe-area-inset-bottom,0))}
+h1{margin:0 0 10px;font-size:22px;letter-spacing:.2px}
+
+/* Toolbar */
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:10px 0 12px}
+.group{display:flex;gap:8px;align-items:center;background:rgba(255,255,255,.04);
+border:1px solid rgba(255,255,255,.06);padding:8px 10px;border-radius:12px}
+select,button{
+  -webkit-appearance:none;appearance:none;outline:none;cursor:pointer;
+  background:#0f1a30;color:var(--text);border:1px solid rgba(255,255,255,.12);
+  padding:10px 12px;border-radius:12px;font-size:14px;font-weight:600;line-height:1.2;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+}
+button{font-weight:700}
+button.ok{background:var(--ok);border:none}
+button.ghost{background:transparent;border-color:rgba(255,255,255,.18)}
+button.warn{background:var(--warn);border:none;color:#1a1200}
+.stat{margin-left:auto;color:var(--muted);font-size:13px}
+
+/* Toggle Belum Hafal */
+.toggle{display:flex;align-items:center;gap:10px;
+background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);
+padding:8px 10px;border-radius:12px;user-select:none}
+.toggle input{position:absolute;opacity:0;pointer-events:none}
+.toggle .track{width:44px;height:24px;border-radius:999px;background:#0f1a30;
+border:1px solid rgba(255,255,255,.15);position:relative;transition:all .25s ease;}
+.toggle .thumb{position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;
+background:#cfd8ea;transition:transform .25s ease, background .25s ease;}
+.toggle input:checked + .track{
+  background:#f59e0b;border-color:#f59e0b;
+}
+.toggle input:checked + .track .thumb{transform:translateX(20px);background:#1a1200}
+.toggle .tlabel{font-size:14px;color:#e8eefc;letter-spacing:.1px}
+
+/* Card */
+.card{position:relative;background:radial-gradient(1200px 360px at 10% -10%,rgba(59,130,246,.08),transparent 45%),var(--panel);
+border:1px solid rgba(255,255,255,.08);border-radius:18px;min-height:58vh;padding:18px;
+display:flex;flex-direction:column;justify-content:center;align-items:center;
+box-shadow:0 10px 30px rgba(0,0,0,.25);touch-action:manipulation}
+.badge{position:absolute;top:10px;left:10px;background:rgba(59,130,246,.18);
+border:1px solid rgba(59,130,246,.4);color:#b9d3ff;padding:4px 8px;border-radius:999px;font-size:11px}
+.known{position:absolute;top:10px;right:10px;background:rgba(16,185,129,.18);
+border:1px solid rgba(16,185,129,.45);color:#aaf3d6;padding:4px 8px;border-radius:999px;font-size:11px;display:none}
+.known.show{display:inline-block}
+.front,.back{display:flex;flex-direction:column;gap:8px;align-items:center;justify-content:center;text-align:center;min-height:46vh}
+.jp{font-size:44px;line-height:1.05;word-break:keep-all}
+.romaji{font-size:14px;color:var(--muted);letter-spacing:.3px}
+.meaning{font-size:28px}
+.small{font-size:13px;color:var(--muted)}
+
+/* Controls */
+.controls-utama{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px;
+max-width:560px;margin-left:auto;margin-right:auto}
+.controls-utama button{width:100%}
+.controls-reset{max-width:560px;margin:10px auto 0}
+.controls-reset button{width:100%}
+.progress{height:10px;background:#0f1a30;border:1px solid rgba(255,255,255,.08);border-radius:999px;
+overflow:hidden;margin:10px auto 0;max-width:560px}
+.bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),#22d3ee)}
+.hint{text-align:center;margin-top:10px;font-size:14px;color:#8aa0c5}
+footer{margin-top:12px;text-align:center;color:#b0bdd8;font-size:12px}
+
+/* Animasi */
+@keyframes slideOutLeft{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(-40px)}}
+@keyframes slideOutRight{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(40px)}}
+@keyframes slideInLeft{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slideInRight{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:translateX(0)}}
+.card.anim-out-left{animation:slideOutLeft .22s ease both}
+.card.anim-out-right{animation:slideOutRight .22s ease both}
+.card.anim-in-left{animation:slideInLeft .22s ease both}
+.card.anim-in-right{animation:slideInRight .22s ease both}
+@media (max-width:420px){.toolbar{gap:8px}.toggle .tlabel{font-size:13px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Flashcard Minna no Nihongo</h1>
+
+  <div class="toolbar">
+    <div class="group">
+      <label for="lesson">Bab</label>
+      <select id="lesson">
+        <option value="1">Bab 1</option>
+        <option value="2">Bab 2</option>
+        <option value="3">Bab 3</option>
+        <option value="4">Bab 4</option>
+        <option value="5">Bab 5</option>
+        <option value="6">Bab 6</option>
+        <option value="7">Bab 7</option>
+        <option value="8">Bab 8</option>
+        <option value="9">Bab 9</option>
+        <option value="10">Bab 10</option>
+        <option value="11">Bab 11</option>
+        <option value="12">Bab 12</option>
+        <option value="13">Bab 13</option>
+        <option value="14">Bab 14</option>
+        <option value="15">Bab 15</option>
+        <option value="16">Bab 16</option>
+        <option value="17">Bab 17</option>
+        <option value="18">Bab 18</option>
+        <option value="19">Bab 19</option>
+        <option value="20">Bab 20</option>
+        <option value="21">Bab 21</option>
+        <option value="22">Bab 22</option>
+        <option value="23">Bab 23</option>
+        <option value="24">Bab 24</option>
+        <option value="25">Bab 25</option>
+        <option value="26">(Kanji N5)</option>
+      </select>
+    </div>
+    <div class="group">
+      <label for="filter">Filter</label>
+      <select id="filter">
+        <option value="all">Semua</option>
+      </select>
+    </div>
+    <label class="toggle"><input id="onlyUnknown" type="checkbox">
+      <span class="track"><span class="thumb"></span></span>
+      <span class="tlabel">Belum hafal</span>
+    </label>
+    <div class="group">
+      <button id="btnShuffle" class="ghost">Acak</button>
+      <button id="btnResetKnown" class="warn">Reset Hafal</button>
+    </div>
+    <div class="stat"><span id="count"></span> • Hafal: <b id="knownCount">0</b></div>
+  </div>
+
+  <div class="card" id="card">
+    <span class="badge" id="badgeCat">KATEGORI</span>
+    <span class="known" id="badgeKnown">Sudah hafal</span>
+    <div class="front" id="front">
+      <div class="jp" id="jpFront">ようこそ</div>
+      <div class="romaji" id="romajiFront">yōkoso</div>
+    </div>
+    <div class="back" id="back" style="display:none">
+      <div class="meaning" id="meaningBack">Selamat datang</div>
+      <div class="small" id="kanjiBack" style="display:none"></div>
+    </div>
+  </div>
+
+  <div class="controls-utama">
+    <button id="btnPrev">← Sebelumnya</button>
+    <button id="btnKnown" class="ok">Hafal</button>
+    <button id="btnNext">Berikutnya →</button>
+  </div>
+  <div class="progress"><div id="bar" class="bar"></div></div>
+  <div class="hint">💡 Ganti Bab di atas • Tap = balik • Geser = pindah • Double tap = tandai hafal</div>
+  <div class="controls-reset"><button id="btnResetProgress" class="ghost">Ulangi</button></div>
+  <footer>Flashcard Minna no Nihongo — Semua Bab</footer>
+</div>
+
+<script>
+/* ==========================
+   DATA MINNA NO NIHONGO
+   ========================== */
+const semuaBab = {
+1: [
+        ["わたし","私","watashi","saya","orang","私 (watashi, saya)"],
+        ["あなた","","anata","Anda","orang",""],
+        ["あの ひと（あの かた）","あの人（あの方）","ano hito (ano kata)","orang itu, beliau","orang","人 (hito, orang) + 方 (kata, arah)"],
+        ["〜さん","","~san","Sdr., Bapak, Ibu","panggilan",""],
+        ["〜ちゃん","","~chan","akhiran untuk anak-anak","panggilan",""],
+        ["〜じん","〜人","~jin","orang ~","panggilan","人 (jin, orang)"],
+        ["せんせい","先生","sensei","guru, dosen","profesi","先 (sen, dulu) + 生 (sei, lahir)"],
+        ["きょうし","教師","kyoushi","guru, dosen","profesi","教 (kyou, mengajar) + 師 (shi, guru)"],
+        ["がくせい","学生","gakusei","mahasiswa","profesi","学 (gaku, belajar) + 生 (sei, murid)"],
+        ["かいしゃいん","会社員","kaishain","karyawan perusahaan","profesi","会 (kai, bertemu) + 社 (sha, perusahaan) + 員 (in, anggota)"],
+        ["しゃいん","社員","shain","karyawan perusahaan","profesi","社 (sha, perusahaan) + 員 (in, anggota)"],
+        ["ぎんこういん","銀行員","ginkouin","pegawai bank","profesi","銀 (gin, perak) + 行 (kou, pergi) + 員 (in, anggota)"],
+        ["いしゃ","医者","isha","dokter","profesi","医 (i, medis) + 者 (sha, orang)"],
+        ["けんきゅうしゃ","研究者","kenkyuusha","peneliti","profesi","研 (ken, teliti) + 究 (kyuu, dalami) + 者 (sha, orang)"],
+        ["だいがく","大学","daigaku","universitas","tempat","大 (dai, besar) + 学 (gaku, belajar)"],
+        ["びょういん","病院","byouin","rumah sakit","tempat","病 (byou, sakit) + 院 (in, gedung)"],
+        ["だれ（どなた）","","dare (donata)","siapa","kata tanya",""],
+        ["〜さい","〜歳","~sai","~ tahun","umur","歳 (sai, umur)"],
+        ["なんさい（おいくつ）","何歳","nansai (oikutsu)","umur berapa","umur","何 (nan, apa) + 歳 (sai, umur)"],
+        ["はい","","hai","ya","ekspresi",""],
+        ["いいえ","","iie","tidak, bukan","ekspresi",""],
+        ["はじめまして","","hajimemashite","perkenalkan","ekspresi",""],
+        ["〜から きました","","~ kara kimashita","datang dari ~","ekspresi",""],
+        ["どうぞ よろしく おねがいします","宜しくお願いします","douzo yoroshiku onegaishimasu","salam kenal","ekspresi","宜 (yoro, baik) + 願 (negai, harap)"],
+        ["しつれいですが","失礼ですが","shitsurei desu ga","permisi","ekspresi","失 (shitsu, hilang) + 礼 (rei, sopan)"],
+        ["おなまえは？","お名前は？","onamae wa?","siapa namanya?","ekspresi","名 (na, nama) + 前 (mae, depan)"],
+        ["こちらは 〜さんです","","kochira wa ~san desu","ini Bapak/Ibu/Sdr. ~","ekspresi",""],
+    ],
+2: [
+        ["これ","","kore","ini","kata tunjuk",""],
+        ["それ","","sore","itu","kata tunjuk",""],
+        ["あれ","","are","itu","kata tunjuk",""],
+        ["この〜","","kono~","~ ini","kata tunjuk",""],
+        ["その〜","","sono~","~ itu","kata tunjuk",""],
+        ["あの〜","","ano~","~ itu","kata tunjuk",""],
+        ["ほん","本","hon","buku","benda","本 (hon, buku)"],
+        ["じしょ","辞書","jisho","kamus","benda","辞 (ji, kata) + 書 (sho, tulis)"],
+        ["ざっし","雑誌","zasshi","majalah","benda","雑 (zatsu, campur) + 誌 (shi, majalah)"],
+        ["しんぶん","新聞","shinbun","koran, surat kabar","benda","新 (shin, baru) + 聞 (bun, dengar)"],
+        ["ノート","","nooto","buku tulis, buku catatan","benda",""],
+        ["てちょう","手帳","techou","buku agenda","benda","手 (te, tangan) + 帳 (chou, buku)"],
+        ["めいし","名刺","meishi","kartu nama","benda","名 (mei, nama) + 刺 (shi, tusuk)"],
+        ["カード","","kaado","kartu","benda",""],
+        ["えんぴつ","鉛筆","enpitsu","pensil","benda","鉛 (en, timbal) + 筆 (pitsu, kuas)"],
+        ["ボールペン","","boorupen","bolpoin","benda",""],
+        ["シャープペンシル","","shaapupenshiru","pensil mekanik","benda",""],
+        ["かぎ","","kagi","kunci","benda",""],
+        ["とけい","時計","tokei","jam, arloji","benda","時 (ji, waktu) + 計 (kei, ukur)"],
+        ["かさ","傘","kasa","payung","benda","傘 (kasa, payung)"],
+        ["かばん","","kaban","tas","benda",""],
+        ["CD","","CD","CD","benda",""],
+        ["テレビ","","terebi","televisi","benda",""],
+        ["ラジオ","","rajio","radio","benda",""],
+        ["カメラ","","kamera","kamera","benda",""],
+        ["コンピューター","","konpyuutaa","komputer, PC","benda",""],
+        ["くるま","車","kuruma","mobil","benda","車 (kuruma, kendaraan)"],
+        ["つくえ","机","tsukue","meja, meja tulis","benda","机 (tsukue, meja)"],
+        ["いす","","isu","kursi","benda",""],
+        ["チョコレート","","chokoreeto","coklat","benda",""],
+        ["コーヒー","","koohii","kopi","benda",""],
+        ["おみやげ","お土産","omiyage","oleh-oleh","benda","土 (do, tanah) + 産 (san, hasil)"],
+        ["えいご","英語","eigo","bahasa Inggris","benda","英 (ei, Inggris) + 語 (go, bahasa)"],
+        ["にほんご","日本語","nihongo","bahasa Jepang","benda","日 (ni, matahari) + 本 (hon, asal) + 語 (go, bahasa)"],
+        ["〜ご","〜語","~go","bahasa ~","benda","語 (go, bahasa)"],
+        ["なん","何","nan","apa","kata tanya","何 (nan, apa)"],
+        ["そう","","sou","begitu","ekspresi",""],
+        ["あのう","","anou","eee...","ekspresi",""],
+        ["えっ","","e?","eh?","ekspresi",""],
+        ["どうぞ","","douzo","silakan","ekspresi",""],
+        ["どうも ありがとうございます","","doumo arigatou gozaimasu","terima kasih banyak","ekspresi",""],
+        ["そうですか","","sou desu ka","oh, begitu","ekspresi",""],
+        ["ちがいます","違います","chigaimasu","bukan, tidak, salah","ekspresi","違 (chiga, berbeda)"],
+        ["あ","","a","oh","ekspresi",""]
+    ],
+  3: [
+        ["ここ","","koko","sini","kata tunjuk",""],
+        ["そこ","","soko","situ","kata tunjuk",""],
+        ["あそこ","","asoko","sana","kata tunjuk",""],
+        ["どこ","","doko","(di) mana","kata tanya",""],
+        ["こちら","","kochira","sini","kata tunjuk",""],
+        ["そちら","","sochira","situ","kata tunjuk",""],
+        ["あちら","","achira","sana","kata tunjuk",""],
+        ["どちら","","dochira","mana","kata tanya",""],
+        ["きょうしつ","教室","kyoushitsu","ruang kelas","tempat","教 (kyou, mengajar) + 室 (shitsu, ruangan)"],
+        ["しょくどう","食堂","shokudou","ruang makan, kantin","tempat","食 (shoku, makan) + 堂 (dou, aula)"],
+        ["じむしょ","事務所","jimusho","kantor","tempat","事 (ji, urusan) + 務 (mu, tugas) + 所 (sho, tempat)"],
+        ["かいぎしつ","会議室","kaigishitsu","ruang rapat","tempat","会 (kai, bertemu) + 議 (gi, rapat) + 室 (shitsu, ruangan)"],
+        ["うけつけ","受付","uketsuke","meja informasi","tempat","受 (uke, menerima) + 付 (tsuke, menempel)"],
+        ["ロビー","","robii","ruang tunggu, lobi","tempat",""],
+        ["へや","部屋","heya","kamar","tempat","部 (heya, bagian) + 屋 (ya, ruangan)"],
+        ["トイレ","","toire","toilet, W.C.","tempat",""],
+        ["かいだん","階段","kaidan","tangga","tempat","階 (kai, tingkat) + 段 (dan, anak tangga)"],
+        ["エレベーター","","erebeetaa","lift","benda",""],
+        ["エスカレーター","","esukareetaa","eskalator","benda",""],
+        ["じどうはんばいき","自動販売機","jidouhanbaiki","mesin jual otomatis","benda","自 (ji, sendiri) + 動 (dou, bergerak) + 販 (han, jual) + 売 (bai, jual) + 機 (ki, mesin)"],
+        ["でんわ","電話","denwa","telepon","benda","電 (den, listrik) + 話 (wa, bicara)"],
+        ["おくに","お国","okuni","negara, negeri","tempat","国 (kuni, negara)"],
+        ["かいしゃ","会社","kaisha","perusahaan","tempat","会 (kai, bertemu) + 社 (sha, perusahaan)"],
+        ["うち","","uchi","rumah","tempat",""],
+        ["くつ","靴","kutsu","sepatu","benda","靴 (kutsu, sepatu)"],
+        ["ネクタイ","","nekutai","dasi","benda",""],
+        ["ワイン","","wain","anggur","benda",""],
+        ["うりば","売り場","uriba","tempat penjualan","tempat","売 (uri, jual) + 場 (ba, tempat)"],
+        ["ちか","地下","chika","bawah tanah","tempat","地 (chi, tanah) + 下 (ka, bawah)"],
+        ["〜かい（〜がい）","〜階","~kai (~gai)","lantai ~, tingkat ~","angka","階 (kai, tingkat)"],
+        ["なんがい","何階","nangai","lantai berapa","kata tanya","何 (nan, apa) + 階 (gai, tingkat)"],
+        ["〜えん","〜円","~en","~ yen","angka","円 (en, yen)"],
+        ["いくら","","ikura","berapa","kata tanya",""],
+        ["ひゃく","百","hyaku","ratus","angka","百 (hyaku, seratus)"],
+        ["せん","千","sen","ribu","angka","千 (sen, seribu)"],
+        ["まん","万","man","sepuluh ribu","angka","万 (man, sepuluh ribu)"],
+        ["すみません","","sumimasen","maaf, permisi","ekspresi",""],
+        ["どうも","","doumo","terima kasih","ekspresi",""]
+    ],
+4: [
+        ["おきます","起きます","okimasu","bangun","aktivitas","起 (oki, bangun)"],
+        ["ねます","寝ます","nemasu","tidur","aktivitas","寝 (ne, tidur)"],
+        ["はたらきます","働きます","hatarakimasu","bekerja","aktivitas","働 (hataraki, bekerja)"],
+        ["やすみます","休みます","yasumimasu","beristirahat, libur","aktivitas","休 (yasumi, istirahat)"],
+        ["べんきょうします","勉強します","benkyou shimasu","belajar","aktivitas","勉 (ben, rajin) + 強 (kyou, kuat)"],
+        ["おわります","終わります","owarimasu","selesai","aktivitas","終 (owa, selesai)"],
+        ["デパート","","depaato","toserba","tempat",""],
+        ["ぎんこう","銀行","ginkou","bank","tempat","銀 (gin, perak) + 行 (kou, pergi)"],
+        ["ゆうびんきょく","郵便局","yuubinkyoku","kantor pos","tempat","郵 (yuu, pos) + 便 (bin, surat) + 局 (kyoku, kantor)"],
+        ["としょかん","図書館","toshokan","perpustakaan","tempat","図 (to, gambar) + 書 (sho, tulis) + 館 (kan, gedung)"],
+        ["びじゅつかん","美術館","bijutsukan","gedung kesenian","tempat","美 (bi, indah) + 術 (jutsu, seni) + 館 (kan, gedung)"],
+        ["いま","今","ima","sekarang","ekspresi","今 (ima, sekarang)"],
+        ["〜じ","〜時","~ji","jam ~, pukul ~","angka","時 (ji, waktu)"],
+        ["〜ふん（〜ぷん）","〜分","~fun (~pun)","~ menit","angka","分 (fun, menit)"],
+        ["はん","半","han","setengah","angka","半 (han, setengah)"],
+        ["なんじ","何時","nanji","jam berapa","kata tanya","何 (nan, apa) + 時 (ji, waktu)"],
+        ["なんぷん","何分","nanpun","berapa menit","kata tanya","何 (nan, apa) + 分 (fun, menit)"],
+        ["ごぜん","午前","gozen","a.m.","waktu","午 (go, siang) + 前 (zen, sebelum)"],
+        ["ごご","午後","gogo","p.m.","waktu","午 (go, siang) + 後 (go, sesudah)"],
+        ["あさ","朝","asa","pagi","waktu","朝 (asa, pagi)"],
+        ["ひる","昼","hiru","siang","waktu","昼 (hiru, siang)"],
+        ["ばん（よる）","晩（夜）","ban (yoru)","malam","waktu","晩 (ban, malam) + 夜 (yoru, malam)"],
+        ["おととい","","ototoi","kemarin lusa","waktu",""],
+        ["きのう","","kinou","kemarin","waktu",""],
+        ["きょう","","kyou","hari ini","waktu",""],
+        ["あした","","ashita","besok","waktu",""],
+        ["あさって","","asatte","lusa","waktu",""],
+        ["けさ","","kesa","tadi pagi","waktu",""],
+        ["こんばん","今晩","konban","malam ini","waktu","今 (kon, sekarang) + 晩 (ban, malam)"],
+        ["やすみ","休み","yasumi","istirahat, cuti, libur","aktivitas","休 (yasumi, istirahat)"],
+        ["ひるやすみ","昼休み","hiruyasumi","istirahat siang","aktivitas","昼 (hiru, siang) + 休 (yasumi, istirahat)"],
+        ["しけん","試験","shiken","ujian","benda","試 (shi, coba) + 験 (ken, uji)"],
+        ["かいぎ","会議","kaigi","rapat","aktivitas","会 (kai, bertemu) + 議 (gi, rapat)"],
+        ["えいが","映画","eiga","film","benda","映 (ei, tampil) + 画 (ga, gambar)"],
+        ["まいあさ","毎朝","maiasa","setiap pagi","waktu","毎 (mai, setiap) + 朝 (asa, pagi)"],
+        ["まいばん","毎晩","maiban","setiap malam","waktu","毎 (mai, setiap) + 晩 (ban, malam)"],
+        ["まいにち","毎日","mainichi","setiap hari","waktu","毎 (mai, setiap) + 日 (nichi, hari)"],
+        ["げつようび","月曜日","getsuyoubi","hari Senin","waktu","月 (getsu, bulan) + 曜 (you, hari) + 日 (bi, hari)"],
+        ["かようび","火曜日","kayoubi","hari Selasa","waktu","火 (ka, api) + 曜 (you, hari) + 日 (bi, hari)"],
+        ["すいようび","水曜日","suiyoubi","hari Rabu","waktu","水 (sui, air) + 曜 (you, hari) + 日 (bi, hari)"],
+        ["もくようび","木曜日","mokuyoubi","hari Kamis","waktu","木 (moku, kayu) + 曜 (you, hari) + 日 (bi, hari)"],
+        ["きんようび","金曜日","kinyoubi","hari Jumat","waktu","金 (kin, emas) + 曜 (you, hari) + 日 (bi, hari)"],
+        ["どようび","土曜日","doyoubi","hari Sabtu","waktu","土 (do, tanah) + 曜 (you, hari) + 日 (bi, hari)"],
+        ["にちようび","日曜日","nichiyoubi","hari Minggu","waktu","日 (nichi, matahari) + 曜 (you, hari) + 日 (bi, hari)"],
+        ["なんようび","何曜日","nanyoubi","hari apa","kata tanya","何 (nan, apa) + 曜 (you, hari) + 日 (bi, hari)"],
+        ["〜から","","~ kara","dari ~","ekspresi",""],
+        ["〜まで","","~ made","sampai ~","ekspresi",""],
+        ["〜と〜","","~ to ~","~ dan ~","ekspresi",""]
+    ],
+5: [
+        ["いきます","行きます","ikimasu","pergi","aktivitas","行 (i, pergi)"],
+        ["きます","来ます","kimasu","datang","aktivitas","来 (ki, datang)"],
+        ["かえります","帰ります","kaerimasu","pulang","aktivitas","帰 (kae, pulang)"],
+        ["がっこう","学校","gakkou","sekolah","tempat","学 (gaku, belajar) + 校 (kou, sekolah)"],
+        ["スーパー","","suupaa","pasar swalayan","tempat",""],
+        ["えき","駅","eki","stasiun","tempat","駅 (eki, stasiun)"],
+        ["ひこうき","飛行機","hikouki","pesawat terbang","transportasi","飛 (hi, terbang) + 行 (kou, pergi) + 機 (ki, mesin)"],
+        ["ふね","船","fune","kapal laut","transportasi","船 (fune, kapal)"],
+        ["でんしゃ","電車","densha","kereta rel listrik","transportasi","電 (den, listrik) + 車 (sha, kendaraan)"],
+        ["ちかてつ","地下鉄","chikatetsu","kereta bawah tanah","transportasi","地 (chi, tanah) + 下 (ka, bawah) + 鉄 (tetsu, besi)"],
+        ["しんかんせん","新幹線","shinkansen","Shinkansen","transportasi","新 (shin, baru) + 幹 (kan, utama) + 線 (sen, jalur)"],
+        ["バス","","basu","bus","transportasi",""],
+        ["タクシー","","takushii","taksi","transportasi",""],
+        ["じてんしゃ","自転車","jitensha","sepeda","transportasi","自 (ji, sendiri) + 転 (ten, berputar) + 車 (sha, kendaraan)"],
+        ["あるいて","歩いて","aruite","dengan berjalan kaki","aktivitas","歩 (aru, berjalan)"],
+        ["ひと","人","hito","orang","orang","人 (hito, orang)"],
+        ["ともだち","友達","tomodachi","teman","orang","友 (tomo, teman) + 達 (tachi, kelompok)"],
+        ["かれ","彼","kare","dia (laki-laki)","orang","彼 (kare, dia)"],
+        ["かのじょ","彼女","kanojo","dia (perempuan)","orang","彼 (kano, dia) + 女 (jo, perempuan)"],
+        ["かぞく","家族","kazoku","keluarga","orang","家 (ka, rumah) + 族 (zoku, keluarga)"],
+        ["ひとりで","一人で","hitoride","sendirian","orang","一 (hito, satu) + 人 (ri, orang)"],
+        ["せんしゅう","先週","senshuu","minggu lalu","waktu","先 (sen, dahulu) + 週 (shuu, minggu)"],
+        ["こんしゅう","今週","konshuu","minggu ini","waktu","今 (kon, sekarang) + 週 (shuu, minggu)"],
+        ["らいしゅう","来週","raishuu","minggu depan","waktu","来 (rai, datang) + 週 (shuu, minggu)"],
+        ["せんげつ","先月","sengetsu","bulan lalu","waktu","先 (sen, dahulu) + 月 (getsu, bulan)"],
+        ["こんげつ","今月","kongetsu","bulan ini","waktu","今 (kon, sekarang) + 月 (getsu, bulan)"],
+        ["らいげつ","来月","raigetsu","bulan depan","waktu","来 (rai, datang) + 月 (getsu, bulan)"],
+        ["きょねん","去年","kyonen","tahun lalu","waktu","去 (kyo, lampau) + 年 (nen, tahun)"],
+        ["ことし","","kotoshi","tahun ini","waktu",""],
+        ["らいねん","来年","rainen","tahun depan","waktu","来 (rai, datang) + 年 (nen, tahun)"],
+        ["〜ねん","〜年","~nen","tahun ~","waktu","年 (nen, tahun)"],
+        ["なんねん","何年","nannen","tahun berapa","kata tanya","何 (nan, apa) + 年 (nen, tahun)"],
+        ["〜がつ","〜月","~gatsu","bulan ~","waktu","月 (gatsu, bulan)"],
+        ["なんがつ","何月","nangatsu","bulan apa","kata tanya","何 (nan, apa) + 月 (gatsu, bulan)"],
+        ["ついたち","一日","tsuitachi","tanggal satu","waktu","一 (ichi, satu) + 日 (nichi, hari)"],
+        ["ふつか","二日","futsuka","tanggal dua, dua hari","waktu","二 (ni, dua) + 日 (ka, hari)"],
+        ["みっか","三日","mikka","tanggal tiga, tiga hari","waktu","三 (san, tiga) + 日 (ka, hari)"],
+        ["よっか","四日","yokka","tanggal empat, empat hari","waktu","四 (yon, empat) + 日 (ka, hari)"],
+        ["いつか","五日","itsuka","tanggal lima, lima hari","waktu","五 (go, lima) + 日 (ka, hari)"],
+        ["むいか","六日","muika","tanggal enam, enam hari","waktu","六 (roku, enam) + 日 (ka, hari)"],
+        ["なのか","七日","nanoka","tanggal tujuh, tujuh hari","waktu","七 (nana, tujuh) + 日 (ka, hari)"],
+        ["ようか","八日","youka","tanggal delapan, delapan hari","waktu","八 (hachi, delapan) + 日 (ka, hari)"],
+        ["ここのか","九日","kokonoka","tanggal sembilan, sembilan hari","waktu","九 (kyuu, sembilan) + 日 (ka, hari)"],
+        ["とおか","十日","tooka","tanggal sepuluh, sepuluh hari","waktu","十 (juu, sepuluh) + 日 (ka, hari)"],
+        ["じゅうよっか","十四日","juuyokka","tanggal empat belas","waktu","十 (juu, sepuluh) + 四 (yon, empat) + 日 (ka, hari)"],
+        ["はつか","二十日","hatsuka","tanggal dua puluh","waktu","二 (ni, dua) + 十 (juu, sepuluh) + 日 (ka, hari)"],
+        ["にじゅうよっか","二十四日","nijuuyokka","tanggal dua puluh empat","waktu","二 (ni, dua) + 十 (juu, sepuluh) + 四 (yon, empat) + 日 (ka, hari)"],
+        ["〜にち","〜日","~nichi","tanggal ~, hari ~","waktu","日 (nichi, hari)"],
+        ["なんにち","何日","nannichi","tanggal berapa, berapa hari","kata tanya","何 (nan, apa) + 日 (nichi, hari)"],
+        ["いつ","","itsu","kapan","kata tanya",""],
+        ["たんじょうび","誕生日","tanjoubi","hari ulang tahun","waktu","誕 (tan, lahir) + 生 (jou, lahir) + 日 (bi, hari)"]
+    ],
+  6: [
+        ["たべます","食べます","tabemasu","makan","aktivitas","食 (ta, makan)"],
+        ["のみます","飲みます","nomimasu","minum","aktivitas","飲 (no, minum)"],
+        ["すいます","吸います","suimasu","mengisap, merokok","aktivitas","吸 (sui, mengisap)"],
+        ["みます","見ます","mimasu","melihat, menonton","aktivitas","見 (mi, melihat)"],
+        ["ききます","聞きます","kikimasu","mendengar","aktivitas","聞 (ki, mendengar)"],
+        ["よみます","読みます","yomimasu","membaca","aktivitas","読 (yo, membaca)"],
+        ["かきます","書きます","kakimasu","menulis","aktivitas","書 (ka, menulis)"],
+        ["かいます","買います","kaimasu","membeli","aktivitas","買 (kai, membeli)"],
+        ["とります","撮ります","torimasu","mengambil foto","aktivitas","撮 (to, memotret)"],
+        ["します","","shimasu","mengerjakan, melakukan","aktivitas",""],
+        ["あいます","会います","aimasu","bertemu","aktivitas","会 (ai, bertemu)"],
+        ["ごはん","","gohan","nasi","benda",""],
+        ["あさごはん","朝ご飯","asagohan","sarapan","benda","朝 (asa, pagi) + 飯 (han, nasi)"],
+        ["ひるごはん","昼ご飯","hirugohan","makan siang","benda","昼 (hiru, siang) + 飯 (han, nasi)"],
+        ["ばんごはん","晩ご飯","bangohan","makan malam","benda","晩 (ban, malam) + 飯 (han, nasi)"],
+        ["パン","","pan","roti","benda",""],
+        ["たまご","卵","tamago","telur","benda","卵 (tamago, telur)"],
+        ["にく","肉","niku","daging","benda","肉 (niku, daging)"],
+        ["さかな","魚","sakana","ikan","benda","魚 (sakana, ikan)"],
+        ["やさい","野菜","yasai","sayur","benda","野 (ya, ladang) + 菜 (sai, sayur)"],
+        ["くだもの","果物","kudamono","buah-buahan","benda","果 (ka, buah) + 物 (mono, benda)"],
+        ["みず","水","mizu","air","benda","水 (mizu, air)"],
+        ["おちゃ","お茶","ocha","teh Jepang","benda","茶 (cha, teh)"],
+        ["こうちゃ","紅茶","koucha","teh","benda","紅 (kou, merah) + 茶 (cha, teh)"],
+        ["ぎゅうにゅう","牛乳","gyuunyuu","susu","benda","牛 (gyuu, sapi) + 乳 (nyuu, susu)"],
+        ["ジュース","","juusu","jus","benda",""],
+        ["ビール","","biiru","bir","benda",""],
+        ["おさけ","お酒","osake","minuman keras","benda","酒 (sake, alkohol)"],
+        ["たばこ","","tabako","rokok","benda",""],
+        ["てがみ","手紙","tegami","surat","benda","手 (te, tangan) + 紙 (gami, kertas)"],
+        ["レポート","","repooto","laporan","benda",""],
+        ["しゃしん","写真","shashin","foto","benda","写 (sha, salin) + 真 (shin, nyata)"],
+        ["ビデオ","","bideo","kaset video, VHS","benda",""],
+        ["みせ","店","mise","toko","tempat","店 (mise, toko)"],
+        ["にわ","庭","niwa","halaman","tempat","庭 (niwa, halaman)"],
+        ["しゅくだい","宿題","shukudai","pekerjaan rumah","benda","宿 (shuku, menginap) + 題 (dai, soal)"],
+        ["テニス","","tenisu","tenis","aktivitas",""],
+        ["サッカー","","sakkaa","sepak bola","aktivitas",""],
+        ["おはなみ","お花見","ohanami","hanami","aktivitas","花 (hana, bunga) + 見 (mi, melihat)"],
+        ["なに","何","nani","apa","kata tanya","何 (nani, apa)"],
+        ["いっしょに","","issho ni","bersama-sama","ekspresi",""],
+        ["ちょっと","","chotto","sebentar, sedikit","ekspresi",""],
+        ["いつも","","itsumo","selalu","ekspresi",""],
+        ["ときどき","時々","tokidoki","kadang-kadang","ekspresi","時 (toki, waktu)"],
+        ["それから","","sorekara","setelah itu, kemudian","ekspresi",""],
+        ["ええ","","ee","ya","ekspresi",""],
+        ["いいですね","","ii desu ne","bagus ya","ekspresi",""],
+        ["わかりました","","wakarimashita","mengerti","ekspresi",""],
+        ["なんですか","何ですか","nan desu ka","apa?","kata tanya","何 (nan, apa)"],
+        ["じゃ、また（あした）","","ja, mata (ashita)","ok, sampai jumpa [besok]","ekspresi",""]
+    ],
+  7: [
+        ["きります","切ります","kirimasu","memotong, menggunting","aktivitas","切 (kiri, potong)"],
+        ["おくります","送ります","okurimasu","mengirim","aktivitas","送 (oku, kirim)"],
+        ["あげます","","agemasu","memberikan","aktivitas",""],
+        ["もらいます","","moraimasu","mendapatkan, menerima","aktivitas",""],
+        ["かします","貸します","kashimasu","meminjamkan","aktivitas","貸 (kashi, meminjamkan)"],
+        ["かります","借ります","karimasu","meminjam","aktivitas","借 (kari, meminjam)"],
+        ["おしえます","教えます","oshiemasu","mengajar","aktivitas","教 (oshie, mengajar)"],
+        ["ならいます","習います","naraimasu","belajar","aktivitas","習 (narai, belajar)"],
+        ["かけます","","kakemasu","menelepon","aktivitas",""],
+        ["て","手","te","tangan","benda","手 (te, tangan)"],
+        ["はし","","hashi","sumpit","benda",""],
+        ["スプーン","","supuun","sendok","benda",""],
+        ["ナイフ","","naifu","pisau","benda",""],
+        ["フォーク","","fooku","garpu","benda",""],
+        ["はさみ","","hasami","gunting","benda",""],
+        ["パソコン","","pasokon","komputer, PC","benda",""],
+        ["ケータイ","","keetai","HP","benda",""],
+        ["メール","","meeru","e-mail","benda",""],
+        ["ねんがじょう","年賀状","nengajou","kartu tahun baru","benda","年 (nen, tahun) + 賀 (ga, ucapan selamat) + 状 (jou, surat)"],
+        ["パンチ","","panchi","pelubang kertas","benda",""],
+        ["ホッチキス","","hocchikisu","stapler","benda",""],
+        ["セロテープ","","seroteepu","selotip","benda",""],
+        ["けしゴム","消しゴム","keshigomu","penghapus karet","benda","消 (keshi, hapus)"],
+        ["かみ","紙","kami","kertas","benda","紙 (kami, kertas)"],
+        ["はな","花","hana","bunga","benda","花 (hana, bunga)"],
+        ["シャツ","","shatsu","kemeja","benda",""],
+        ["プレゼント","","purezento","kado, hadiah","benda",""],
+        ["にもつ","荷物","nimotsu","barang","benda","荷 (ni, barang) + 物 (motsu, benda)"],
+        ["おかね","お金","okane","uang","benda","金 (kane, uang)"],
+        ["きっぷ","切符","kippu","karcis","benda","切 (kip, tiket) + 符 (pu, tanda)"],
+        ["クリスマス","","kurisumasu","Natal","ekspresi",""],
+        ["ちち","父","chichi","bapak, ayah","orang","父 (chichi, ayah)"],
+        ["はは","母","haha","ibu","orang","母 (haha, ibu)"],
+        ["おとうさん","お父さん","otousan","bapak, ayah","orang","父 (tou, ayah)"],
+        ["おかあさん","お母さん","okaasan","ibu","orang","母 (kaa, ibu)"],
+        ["もう","","mou","sudah","ekspresi",""],
+        ["まだ","","mada","belum","ekspresi",""],
+        ["これから","","korekara","mulai dari sekarang","ekspresi",""],
+        ["〜は すてきですね","","~ wa suteki desu ne","~ bagus ya","ekspresi",""],
+        ["いらっしゃい","","irasshai","selamat datang","ekspresi",""],
+        ["どうぞ おあがりください","","douzo oagari kudasai","silakan masuk","ekspresi",""],
+        ["しつれいします","失礼します","shitsurei shimasu","permisi","ekspresi","失 (shitsu, hilang) + 礼 (rei, sopan)"],
+        ["〜は いかがですか","","~ wa ikaga desu ka","bagaimana ~?","ekspresi",""],
+        ["いただきます","","itadakimasu","selamat makan","ekspresi",""],
+        ["ごちそうさまでした","","gochisousama deshita","terima kasih atas hidangannya","ekspresi",""]
+    ],
+8: [
+        ["ハンサム","ハンサム[な]","hansamu","tampan, gagah, ganteng","ekspresi",""],
+        ["きれい","きれい[な]","kirei","cantik, bersih","ekspresi",""],
+        ["しずか","静か[な]","shizuka","sunyi, tenang","ekspresi","静 (shizu, tenang)"],
+        ["にぎやか","にぎやか[な]","nigiyaka","ramai","ekspresi",""],
+        ["ゆうめい","有名[な]","yuumei","terkenal","ekspresi","有 (yuu, ada) + 名 (mei, nama)"],
+        ["しんせつ","親切[な]","shinsetsu","baik hati","ekspresi","親 (shin, dekat) + 切 (setsu, peduli)"],
+        ["げんき","元気[な]","genki","sehat walafiat","ekspresi","元 (gen, asal) + 気 (ki, energi)"],
+        ["ひま","暇[な]","hima","senggang","ekspresi","暇 (hima, senggang)"],
+        ["べんり","便利[な]","benri","praktis","ekspresi","便 (ben, kemudahan) + 利 (ri, manfaat)"],
+        ["すてき","すてき[な]","suteki","bagus","ekspresi",""],
+        ["おおきい","大きい","ookii","besar","ekspresi","大 (oo, besar)"],
+        ["ちいさい","小さい","chiisai","kecil","ekspresi","小 (chii, kecil)"],
+        ["あたらしい","新しい","atarashii","baru","ekspresi","新 (atara, baru)"],
+        ["ふるい","古い","furui","lama, tua","ekspresi","古 (furu, lama)"],
+        ["いい（よい）","","ii (yoi)","baik, bagus","ekspresi",""],
+        ["わるい","悪い","warui","buruk, jelek","ekspresi","悪 (waru, buruk)"],
+        ["あつい","暑い","atsui","panas","ekspresi","暑 (atsu, panas)"],
+        ["さむい","寒い","samui","dingin","ekspresi","寒 (samu, dingin)"],
+        ["つめたい","冷たい","tsumetai","dingin","ekspresi","冷 (tsume, dingin)"],
+        ["むずかしい","難しい","muzukashii","sulit, susah","ekspresi","難 (muzuka, sulit)"],
+        ["やさしい","易しい","yasashii","mudah, gampang","ekspresi","易 (yasa, mudah)"],
+        ["たかい","高い","takai","mahal, tinggi","ekspresi","高 (taka, tinggi)"],
+        ["やすい","安い","yasui","murah","ekspresi","安 (yasu, murah)"],
+        ["ひくい","低い","hikui","rendah","ekspresi","低 (hiku, rendah)"],
+        ["おもしろい","","omoshiroi","menarik","ekspresi",""],
+        ["おいしい","","oishii","enak","ekspresi",""],
+        ["いそがしい","忙しい","isogashii","sibuk","ekspresi","忙 (iso, sibuk)"],
+        ["たのしい","楽しい","tanoshii","senang","ekspresi","楽 (tano, senang)"],
+        ["しろい","白い","shiroi","putih","ekspresi","白 (shiro, putih)"],
+        ["くろい","黒い","kuroi","hitam","ekspresi","黒 (kuro, hitam)"],
+        ["あかい","赤い","akai","merah","ekspresi","赤 (aka, merah)"],
+        ["あおい","青い","aoi","biru","ekspresi","青 (ao, biru)"],
+        ["さくら","桜","sakura","Sakura","benda","桜 (sakura, sakura)"],
+        ["やま","山","yama","gunung","tempat","山 (yama, gunung)"],
+        ["まち","町","machi","kota","tempat","町 (machi, kota)"],
+        ["たべもの","食べ物","tabemono","makanan","benda","食 (tabe, makan) + 物 (mono, benda)"],
+        ["ところ","所","tokoro","tempat","tempat","所 (tokoro, tempat)"],
+        ["りょう","寮","ryou","asrama","tempat","寮 (ryou, asrama)"],
+        ["レストラン","","resutoran","restoran","tempat",""],
+        ["せいかつ","生活","seikatsu","kehidupan","ekspresi","生 (sei, hidup) + 活 (katsu, aktivitas)"],
+        ["おしごと","お仕事","oshigoto","pekerjaan","aktivitas","仕 (shi, melayani) + 事 (goto, urusan)"],
+        ["どう","","dou","bagaimana","kata tanya",""],
+        ["どんな〜","","donna~","yang bagaimana ~","kata tanya",""],
+        ["とても","","totemo","sangat","ekspresi",""],
+        ["あまり","","amari","tidak begitu","ekspresi",""],
+        ["そして","","soshite","kemudian, dan","ekspresi",""],
+        ["〜が、〜","","~ ga, ~","~ tetapi ~","ekspresi",""],
+        ["おげんきですか","お元気ですか","ogenki desu ka","apa kabar?","ekspresi","元 (gen, asal) + 気 (ki, energi)"],
+        ["そうですね","","sou desu ne","bagaimana ya?","ekspresi",""],
+        ["〜、もういっぱい いかがですか","","~ mou ippai ikaga desu ka","mau tambah secangkir lagi?","ekspresi",""],
+        ["いいえ、けっこうです","","iie, kekkou desu","tidak, terima kasih","ekspresi",""],
+        ["もう〜です","","mou ~ desu","sudah ~","ekspresi",""],
+        ["そろそろ しつれいします","","sorosoro shitsurei shimasu","maaf, saya mau pamit dulu","ekspresi",""],
+        ["いいえ","","iie","sama-sama","ekspresi",""],
+        ["また いらっしゃって ください","","mata irasshatte kudasai","silakan datang lagi","ekspresi",""]
+    ],
+9: [
+        ["わかります","","wakarimasu","mengerti","aktivitas",""],
+        ["あります","","arimasu","ada, mempunyai","aktivitas",""],
+        ["すき","好き[な]","suki","suka, gemar","ekspresi","好 (suki, suka)"],
+        ["きらい","嫌い[な]","kirai","tidak suka","ekspresi","嫌 (kirai, benci)"],
+        ["じょうず","上手[な]","jouzu","pandai, pintar","ekspresi","上 (jou, atas) + 手 (zu, tangan)"],
+        ["へた","下手[な]","heta","tidak pandai","ekspresi","下 (he, bawah) + 手 (ta, tangan)"],
+        ["のみもの","飲み物","nomimono","minuman","benda","飲 (nomi, minum) + 物 (mono, benda)"],
+        ["りょうり","料理","ryouri","masakan","benda","料 (ryou, bahan) + 理 (ri, mengolah)"],
+        ["スポーツ","","supootsu","olahraga","aktivitas",""],
+        ["やきゅう","野球","yakyuu","baseball","aktivitas","野 (ya, lapangan) + 球 (kyuu, bola)"],
+        ["ダンス","","dansu","dansa","aktivitas",""],
+        ["りょこう","旅行","ryokou","tamasya","aktivitas","旅 (ryo, perjalanan) + 行 (kou, pergi)"],
+        ["おんがく","音楽","ongaku","musik","benda","音 (on, suara) + 楽 (gaku, musik)"],
+        ["うた","歌","uta","lagu","benda","歌 (uta, lagu)"],
+        ["クラシック","","kurashikku","klasik","benda",""],
+        ["ジャズ","","jazu","jazz","benda",""],
+        ["コンサート","","konsaato","konser","benda",""],
+        ["カラオケ","","karaoke","karaoke","aktivitas",""],
+        ["かぶき","歌舞伎","kabuki","Kabuki","benda","歌 (ka, lagu) + 舞 (bu, tari) + 伎 (ki, seni)"],
+        ["え","絵","e","gambar","benda","絵 (e, gambar)"],
+        ["じ","字","ji","huruf","benda","字 (ji, huruf)"],
+        ["かんじ","漢字","kanji","Kanji","benda","漢 (kan, Tiongkok) + 字 (ji, huruf)"],
+        ["ひらがな","","hiragana","Hiragana","benda",""],
+        ["カタカナ","","katakana","Katakana","benda",""],
+        ["ローマじ","ローマ字","roomaji","huruf latin","benda","字 (ji, huruf)"],
+        ["こまかい おかね","細かい お金","komakai okane","uang kecil, receh","benda","細 (komaka, kecil) + 金 (kane, uang)"],
+        ["チケット","","chiketto","tiket","benda",""],
+        ["じかん","時間","jikan","jam, waktu","waktu","時 (ji, waktu) + 間 (kan, selang)"],
+        ["ようじ","用事","youji","urusan","aktivitas","用 (you, keperluan) + 事 (ji, urusan)"],
+        ["やくそく","約束","yakusoku","janji","aktivitas","約 (yaku, perjanjian) + 束 (soku, ikatan)"],
+        ["アルバイト","","arubaito","kerja paruh waktu","aktivitas",""],
+        ["ごしゅじん","ご主人","goshujin","suami","orang","主 (shu, tuan) + 人 (jin, orang)"],
+        ["おっと（しゅじん）","夫（主人）","otto (shujin)","suami","orang","夫 (otto, suami)"],
+        ["おくさん","奥さん","okusan","istri","orang","奥 (oku, dalam)"],
+        ["つま（かない）","妻（家内）","tsuma (kanai)","istri","orang","妻 (tsuma, istri)"],
+        ["こども","子ども","kodomo","anak","orang","子 (ko, anak)"],
+        ["よく","","yoku","dengan baik","ekspresi",""],
+        ["だいたい","","daitai","kira-kira","ekspresi",""],
+        ["たくさん","","takusan","banyak","ekspresi",""],
+        ["すこし","少し","sukoshi","sedikit","ekspresi","少 (suko, sedikit)"],
+        ["ぜんぜん","全然","zenzen","sama sekali","ekspresi","全 (zen, seluruh) + 然 (zen, demikian)"],
+        ["はやく","早く、速く","hayaku","dengan cepat","ekspresi","早 (haya, cepat) + 速 (haya, cepat)"],
+        ["〜から","","~ kara","karena ~","ekspresi",""],
+        ["どうして","","doushite","kenapa","kata tanya",""],
+        ["かしてください","貸してください","kashite kudasai","tolong pinjamkan","ekspresi","貸 (kashi, meminjamkan)"],
+        ["いいですよ","","ii desu yo","boleh","ekspresi",""],
+        ["ざんねんです","残念です","zannen desu","sayang sekali","ekspresi","残 (zan, tersisa) + 念 (nen, pikiran)"],
+        ["ああ","","aa","ah, oh","ekspresi",""],
+        ["いっしょに いかがですか","","issho ni ikaga desu ka","bagaimana kalau bersama-sama?","ekspresi",""],
+        ["〜は ちょっと……","","~ wa chotto...","maaf, saya tidak bisa ~","ekspresi",""],
+        ["だめですか","","dame desu ka","tidak bisa ya?","ekspresi",""],
+        ["また こんど おねがいします","","mata kondo onegaishimasu","maaf, lain kali saja","ekspresi",""]
+    ],
+10: [
+        ["あります","","arimasu","ada","aktivitas",""],
+        ["います","","imasu","ada","aktivitas",""],
+        ["いろいろ","","iroiro","berbagai","ekspresi",""],
+        ["おとこの ひと","男の人","otoko no hito","orang laki-laki","orang","男 (otoko, laki-laki) + 人 (hito, orang)"],
+        ["おんなの ひと","女の人","onna no hito","orang perempuan","orang","女 (onna, perempuan) + 人 (hito, orang)"],
+        ["おとこの こ","男の子","otoko no ko","anak laki-laki","orang","男 (otoko, laki-laki) + 子 (ko, anak)"],
+        ["おんなの こ","女の子","onna no ko","anak perempuan","orang","女 (onna, perempuan) + 子 (ko, anak)"],
+        ["いぬ","犬","inu","anjing","benda","犬 (inu, anjing)"],
+        ["ねこ","猫","neko","kucing","benda","猫 (neko, kucing)"],
+        ["パンダ","","panda","panda","benda",""],
+        ["ぞう","象","zou","gajah","benda","象 (zou, gajah)"],
+        ["き","木","ki","pohon","benda","木 (ki, pohon)"],
+        ["もの","物","mono","barang","benda","物 (mono, benda)"],
+        ["でんち","電池","denchi","baterai","benda","電 (den, listrik) + 池 (chi, baterai)"],
+        ["はこ","箱","hako","kotak","benda","箱 (hako, kotak)"],
+        ["スイッチ","","suicchi","tombol, sakelar","benda",""],
+        ["れいぞうこ","冷蔵庫","reizouko","kulkas","benda","冷 (rei, dingin) + 蔵 (zou, simpan) + 庫 (ko, gudang)"],
+        ["テーブル","","teeburu","meja makan","benda",""],
+        ["ベッド","","beddo","tempat tidur","benda",""],
+        ["たな","棚","tana","lemari","benda","棚 (tana, rak)"],
+        ["ドア","","doa","pintu","benda",""],
+        ["まど","窓","mado","jendela","benda","窓 (mado, jendela)"],
+        ["ポスト","","posuto","kotak surat","benda",""],
+        ["ビル","","biru","gedung","tempat",""],
+        ["ATM","","ATM","ATM","tempat",""],
+        ["コンビニ","","konbini","toko 24 jam","tempat",""],
+        ["こうえん","公園","kouen","taman","tempat","公 (kou, umum) + 園 (en, taman)"],
+        ["きっさてん","喫茶店","kissaten","coffee shop","tempat","喫 (kissa, minum) + 茶 (cha, teh) + 店 (ten, toko)"],
+        ["〜や","〜屋","~ya","toko ~","tempat","屋 (ya, toko)"],
+        ["のりば","乗り場","noriba","tempat naik","tempat","乗 (nori, naik) + 場 (ba, tempat)"],
+        ["けん","県","ken","prefektur","tempat","県 (ken, prefektur)"],
+        ["うえ","上","ue","atas","tempat","上 (ue, atas)"],
+        ["した","下","shita","bawah","tempat","下 (shita, bawah)"],
+        ["まえ","前","mae","depan, muka","tempat","前 (mae, depan)"],
+        ["うしろ","","ushiro","belakang","tempat",""],
+        ["みぎ","右","migi","kanan","tempat","右 (migi, kanan)"],
+        ["ひだり","左","hidari","kiri","tempat","左 (hidari, kiri)"],
+        ["なか","中","naka","dalam","tempat","中 (naka, dalam)"],
+        ["そと","外","soto","luar","tempat","外 (soto, luar)"],
+        ["となり","隣","tonari","sebelah","tempat","隣 (tonari, sebelah)"],
+        ["ちかく","近く","chikaku","dekat","tempat","近 (chika, dekat)"],
+        ["あいだ","間","aida","antara","tempat","間 (aida, antara)"],
+        ["〜や〜（など）","","~ ya ~ (nado)","~ dan ~","ekspresi",""],
+        ["どうも すみません","","doumo sumimasen","terima kasih banyak","ekspresi",""],
+        ["ナンプラー","","nanpuraa","kecap ikan","benda",""],
+        ["コーナー","","koonaa","tempat, bagian penjualan","tempat",""],
+        ["いちばん した","一番下","ichiban shita","paling bawah","tempat","一 (ichi, satu) + 番 (ban, urutan) + 下 (shita, bawah)"]
+    ],
+  11: [
+        ["います","","imasu","ada, mempunyai","aktivitas",""],
+        ["あります","","arimasu","ada","aktivitas",""],
+        ["かかります","","kakarimasu","memakan, perlu","aktivitas",""],
+        ["やすみます","休みます","yasumimasu","tidak masuk kerja","aktivitas","休 (yasumi, istirahat)"],
+        ["ひとつ","１つ","hitotsu","satu","angka","一 (hito, satu)"],
+        ["ふたつ","２つ","futatsu","dua","angka","二 (futa, dua)"],
+        ["みっつ","３つ","mittsu","tiga","angka","三 (mi, tiga)"],
+        ["よっつ","４つ","yottsu","empat","angka","四 (yo, empat)"],
+        ["いつつ","５つ","itsutsu","lima","angka","五 (itsu, lima)"],
+        ["むっつ","６つ","muttsu","enam","angka","六 (mu, enam)"],
+        ["ななつ","７つ","nanatsu","tujuh","angka","七 (nana, tujuh)"],
+        ["やっつ","８つ","yattsu","delapan","angka","八 (ya, delapan)"],
+        ["ここのつ","９つ","kokonotsu","sembilan","angka","九 (kokono, sembilan)"],
+        ["とお","10","too","sepuluh","angka","十 (too, sepuluh)"],
+        ["いくつ","","ikutsu","berapa","kata tanya",""],
+        ["ひとり","１人","hitori","seorang","orang","一 (hito, satu) + 人 (ri, orang)"],
+        ["ふたり","２人","futari","dua orang","orang","二 (futa, dua) + 人 (ri, orang)"],
+        ["〜にん","〜人","~nin","~ orang","angka","人 (nin, orang)"],
+        ["〜だい","〜台","~dai","buah","angka","台 (dai, unit mesin)"],
+        ["〜まい","〜枚","~mai","lembar, helai","angka","枚 (mai, lembar)"],
+        ["〜かい","〜回","~kai","~ kali","angka","回 (kai, kali)"],
+        ["りんご","","ringo","apel","benda",""],
+        ["みかん","","mikan","jeruk","benda",""],
+        ["サンドイッチ","","sandoicchi","sandwich","benda",""],
+        ["カレー［ライス］","","karee [raisu]","nasi kari","benda",""],
+        ["アイスクリーム","","aisukuriimu","es krim","benda",""],
+        ["きって","切手","kitte","perangko","benda","切 (kit, potong) + 手 (te, tangan)"],
+        ["はがき","","hagaki","kartu pos","benda",""],
+        ["ふうとう","封筒","fuutou","amplop","benda","封 (fuu, segel) + 筒 (tou, tabung)"],
+        ["りょうしん","両親","ryoushin","orang tua","orang","両 (ryou, kedua) + 親 (shin, orang tua)"],
+        ["きょうだい","兄弟","kyoudai","saudara, saudari","orang","兄 (kyou, kakak laki-laki) + 弟 (dai, adik laki-laki)"],
+        ["あに","兄","ani","kakak laki-laki","orang","兄 (ani, kakak laki-laki)"],
+        ["おにいさん","お兄さん","oniisan","kakak laki-laki","orang","兄 (nii, kakak laki-laki)"],
+        ["あね","姉","ane","kakak perempuan","orang","姉 (ane, kakak perempuan)"],
+        ["おねえさん","お姉さん","oneesan","kakak perempuan","orang","姉 (nee, kakak perempuan)"],
+        ["おとうと","弟","otouto","adik laki-laki","orang","弟 (otouto, adik laki-laki)"],
+        ["おとうとさん","弟さん","otoutosan","adik laki-laki","orang","弟 (otouto, adik laki-laki)"],
+        ["いもうと","妹","imouto","adik perempuan","orang","妹 (imouto, adik perempuan)"],
+        ["いもうとさん","妹さん","imoutosan","adik perempuan","orang","妹 (imouto, adik perempuan)"],
+        ["がいこく","外国","gaikoku","luar negeri","tempat","外 (gai, luar) + 国 (koku, negara)"],
+        ["りゅうがくせい","留学生","ryuugakusei","pelajar asing","orang","留 (ryuu, tinggal) + 学 (gaku, belajar) + 生 (sei, murid)"],
+        ["クラス","","kurasu","kelas","tempat",""],
+        ["〜じかん","〜時間","~jikan","~ jam","waktu","時 (ji, waktu) + 間 (kan, selang)"],
+        ["〜しゅうかん","〜週間","~shuukan","~ minggu","waktu","週 (shuu, minggu) + 間 (kan, selang)"],
+        ["〜かげつ","〜か月","~kagetsu","~ bulan","waktu","月 (getsu, bulan)"],
+        ["〜ねん","〜年","~nen","~ tahun","waktu","年 (nen, tahun)"],
+        ["〜ぐらい","","~gurai","kira-kira","ekspresi",""],
+        ["どのぐらい","","donogurai","berapa lama","kata tanya",""],
+        ["ぜんぶで","全部で","zenbu de","semuanya","ekspresi","全 (zen, seluruh) + 部 (bu, bagian)"],
+        ["みんな","","minna","semua","ekspresi",""],
+        ["〜だけ","","~ dake","hanya ~ saja","ekspresi",""],
+        ["かしこまりました","","kashikomarimashita","baik","ekspresi",""],
+        ["いい おてんきですね","いい お天気ですね","ii otenki desu ne","cuacanya bagus ya","ekspresi","天 (ten, langit) + 気 (ki, udara)"],
+        ["おでかけですか","","odekake desu ka","mau keluar?","ekspresi",""],
+        ["ちょっと 〜まで","","chotto ~ made","ke ~ sebentar","ekspresi",""],
+        ["いってらっしゃい","","itterasshai","hati-hati","ekspresi",""],
+        ["いってきます","","ittekimasu","saya berangkat","ekspresi",""],
+        ["こうくうびん","航空便","koukuubin","pos udara","benda","航 (kou, pelayaran) + 空 (kuu, udara) + 便 (bin, kiriman)"],
+        ["おねがいします","","onegaishimasu","tolong","ekspresi",""]
+    ],
+12: [
+        ["かんたん","簡単[な]","kantan","mudah, gampang","ekspresi","簡 (kan, sederhana) + 単 (tan, mudah)"],
+        ["ちかい","近い","chikai","dekat","ekspresi","近 (chika, dekat)"],
+        ["とおい","遠い","tooi","jauh","ekspresi","遠 (too, jauh)"],
+        ["はやい","速い、早い","hayai","cepat","ekspresi","速 (haya, cepat) + 早 (haya, awal)"],
+        ["おそい","遅い","osoi","lambat","ekspresi","遅 (oso, lambat)"],
+        ["おおい","多い","ooi","banyak","ekspresi","多 (oo, banyak)"],
+        ["すくない","少ない","sukunai","sedikit","ekspresi","少 (suku, sedikit)"],
+        ["あたたかい","暖かい、温かい","atatakai","hangat","ekspresi","暖 (atataka, hangat) + 温 (atataka, hangat)"],
+        ["すずしい","涼しい","suzushii","sejuk","ekspresi","涼 (suzu, sejuk)"],
+        ["あまい","甘い","amai","manis","ekspresi","甘 (ama, manis)"],
+        ["からい","辛い","karai","pedas","ekspresi","辛 (kara, pedas)"],
+        ["おもい","重い","omoi","berat","ekspresi","重 (omo, berat)"],
+        ["かるい","軽い","karui","ringan","ekspresi","軽 (karu, ringan)"],
+        ["いい","","ii","lebih baik","ekspresi",""],
+        ["きせつ","季節","kisetsu","musim","waktu","季 (ki, musim) + 節 (setsu, musim)"],
+        ["はる","春","haru","musim semi","waktu","春 (haru, musim semi)"],
+        ["なつ","夏","natsu","musim panas","waktu","夏 (natsu, musim panas)"],
+        ["あき","秋","aki","musim gugur","waktu","秋 (aki, musim gugur)"],
+        ["ふゆ","冬","fuyu","musim dingin","waktu","冬 (fuyu, musim dingin)"],
+        ["てんき","天気","tenki","cuaca","waktu","天 (ten, langit) + 気 (ki, udara)"],
+        ["あめ","雨","ame","hujan","waktu","雨 (ame, hujan)"],
+        ["ゆき","雪","yuki","salju","waktu","雪 (yuki, salju)"],
+        ["くもり","曇り","kumori","mendung","waktu","曇 (kumo, mendung)"],
+        ["ホテル","","hoteru","hotel","tempat",""],
+        ["くうこう","空港","kuukou","bandara","tempat","空 (kuu, langit) + 港 (kou, pelabuhan)"],
+        ["うみ","海","umi","laut","tempat","海 (umi, laut)"],
+        ["せかい","世界","sekai","dunia","tempat","世 (se, dunia) + 界 (kai, batas)"],
+        ["パーティー","","paatii","pesta","aktivitas",""],
+        ["おまつり","お祭り","omatsuri","perayaan","aktivitas","祭 (matsuri, festival)"],
+        ["すきやき","すき焼き","sukiyaki","sukiyaki","benda","焼 (yaki, panggang)"],
+        ["さしみ","刺身","sashimi","sashimi","benda","刺 (sashi, iris) + 身 (mi, daging)"],
+        ["おすし","","osushi","sushi","benda",""],
+        ["てんぷら","","tenpura","tempura","benda",""],
+        ["ぶたにく","豚肉","butaniku","daging babi","benda","豚 (buta, babi) + 肉 (niku, daging)"],
+        ["とりにく","とり肉","toriniku","daging ayam","benda","肉 (niku, daging)"],
+        ["ぎゅうにく","牛肉","gyuuniku","daging sapi","benda","牛 (gyuu, sapi) + 肉 (niku, daging)"],
+        ["レモン","","remon","lemon","benda",""],
+        ["いけばな","生け花","ikebana","seni merangkai bunga","aktivitas","生 (ike, hidup) + 花 (hana, bunga)"],
+        ["もみじ","紅葉","momiji","maple","benda","紅 (momi, merah) + 葉 (ji, daun)"],
+        ["どちら","","dochira","yang mana","kata tanya",""],
+        ["どちらも","","dochiramo","dua-duanya","ekspresi",""],
+        ["いちばん","","ichiban","paling","ekspresi",""],
+        ["ずっと","","zutto","jauh lebih","ekspresi",""],
+        ["はじめて","初めて","hajimete","untuk pertama kali","ekspresi","初 (haji, pertama)"],
+        ["ただいま","","tadaima","saya kembali","ekspresi",""],
+        ["おかえりなさい","","okaerinasai","sudah pulang ya","ekspresi",""],
+        ["わあ、すごい ひとですね","","waa, sugoi hito desu ne","wah, banyak orang","ekspresi",""],
+        ["つかれました","疲れました","tsukaremashita","lelah","ekspresi","疲 (tsuka, lelah)"]
+    ],
+13: [
+        ["あそびます","遊びます","asobimasu","bermain","aktivitas","遊 (aso, bermain)"],
+        ["およぎます","泳ぎます","oyogimasu","berenang","aktivitas","泳 (oyo, berenang)"],
+        ["むかえます","迎えます","mukaemasu","menjemput","aktivitas","迎 (mukae, menyambut)"],
+        ["つかれます","疲れます","tsukaremasu","lelah","aktivitas","疲 (tsukare, lelah)"],
+        ["けっこんします","結婚します","kekkon shimasu","menikah","aktivitas","結 (ketsu, mengikat) + 婚 (kon, menikah)"],
+        ["かいものします","買い物します","kaimono shimasu","berbelanja","aktivitas","買 (kai, membeli) + 物 (mono, barang)"],
+        ["しょくじします","食事します","shokuji shimasu","makan","aktivitas","食 (shoku, makan) + 事 (ji, urusan)"],
+        ["さんぽします","散歩します","sanpo shimasu","berjalan-jalan","aktivitas","散 (san, menyebar) + 歩 (po, berjalan)"],
+        ["たいへん","大変[な]","taihen","berat, susah","ekspresi","大 (tai, besar) + 変 (hen, berubah)"],
+        ["ほしい","欲しい","hoshii","ingin, mau","ekspresi","欲 (hoshi, ingin)"],
+        ["ひろい","広い","hiroi","luas","ekspresi","広 (hiro, luas)"],
+        ["せまい","狭い","semai","sempit","ekspresi","狭 (sema, sempit)"],
+        ["プール","","puuru","kolam renang","tempat",""],
+        ["かわ","川","kawa","sungai","tempat","川 (kawa, sungai)"],
+        ["びじゅつ","美術","bijutsu","seni","benda","美 (bi, indah) + 術 (jutsu, seni)"],
+        ["つり","釣り","tsuri","memancing","aktivitas","釣 (tsuri, memancing)"],
+        ["スキー","","sukii","ski","aktivitas",""],
+        ["しゅうまつ","週末","shuumatsu","akhir pekan","waktu","週 (shuu, minggu) + 末 (matsu, akhir)"],
+        ["おしょうがつ","お正月","oshougatsu","tahun baru","waktu","正 (shou, benar) + 月 (gatsu, bulan)"],
+        ["〜ごろ","","~goro","sekitar ~","waktu",""],
+        ["なにか","何か","nanika","sesuatu","kata tanya","何 (nani, apa)"],
+        ["どこか","","dokoka","suatu tempat","kata tanya",""],
+        ["のどが かわきます","","nodo ga kawakimasu","haus","ekspresi",""],
+        ["おなかが すきます","","onaka ga sukimasu","lapar","ekspresi",""],
+        ["そうしましょう","","sou shimashou","ya, mari","ekspresi",""],
+        ["ごちゅうもんは？","ご注文は？","gochuumon wa","mau pesan apa?","ekspresi","注 (chuu, pesan) + 文 (mon, permintaan)"],
+        ["ていしょく","定食","teishoku","menu paket","benda","定 (tei, tetap) + 食 (shoku, makan)"],
+        ["ぎゅうどん","牛どん","gyuudon","gyudon","benda","牛 (gyuu, sapi)"],
+        ["しょうしょう おまちください","","shoushou omachi kudasai","tunggu sebentar","ekspresi",""],
+        ["〜でございます","","~ de gozaimasu","bentuk halus dari です","ekspresi",""],
+        ["べつべつに","別々に","betsubetsu ni","sendiri-sendiri, masing-masing","ekspresi","別 (betsu, terpisah)"]
+    ],
+14: [
+        ["つけます","","tsukemasu","menyalakan","aktivitas",""],
+        ["けします","消します","keshimasu","mematikan","aktivitas","消 (keshi, menghapus/mematikan)"],
+        ["あけます","開けます","akemasu","membuka","aktivitas","開 (ake, membuka)"],
+        ["しめます","閉めます","shimemasu","menutup","aktivitas","閉 (shime, menutup)"],
+        ["いそぎます","急ぎます","isogimasu","buru-buru","aktivitas","急 (iso, cepat)"],
+        ["まちます","待ちます","machimasu","menunggu","aktivitas","待 (machi, menunggu)"],
+        ["もちます","持ちます","mochimasu","membawa","aktivitas","持 (mochi, memegang)"],
+        ["とります","取ります","torimasu","mengambil","aktivitas","取 (tori, mengambil)"],
+        ["てつだいます","手伝います","tetsudaimasu","membantu","aktivitas","手 (te, tangan) + 伝 (tsuta, menyampaikan)"],
+        ["よびます","呼びます","yobimasu","memanggil","aktivitas","呼 (yobi, memanggil)"],
+        ["はなします","話します","hanashimasu","berbicara","aktivitas","話 (hanashi, berbicara)"],
+        ["つかいます","使います","tsukaimasu","memakai","aktivitas","使 (tsukai, menggunakan)"],
+        ["とめます","止めます","tomemasu","menghentikan","aktivitas","止 (tome, berhenti)"],
+        ["みせます","見せます","misemasu","memperlihatkan","aktivitas","見 (mi, melihat)"],
+        ["おしえます","教えます","oshiemasu","memberitahukan","aktivitas","教 (oshie, mengajar/memberitahu)"],
+        ["すわります","座ります","suwarimasu","duduk","aktivitas","座 (suwa, duduk)"],
+        ["たちます","立ちます","tachimasu","berdiri","aktivitas","立 (tachi, berdiri)"],
+        ["はいります","入ります","hairimasu","masuk","aktivitas","入 (hai, masuk)"],
+        ["でます","出ます","demasu","keluar","aktivitas","出 (de, keluar)"],
+        ["ふります","降ります","furimasu","turun","aktivitas","降 (fu, turun)"],
+        ["コピーします","","kopii shimasu","memfotokopi","aktivitas",""],
+        ["でんき","電気","denki","listrik, lampu","benda","電 (den, listrik) + 気 (ki, energi)"],
+        ["エアコン","","eakon","AC","benda",""],
+        ["パスポート","","pasupooto","paspor","benda",""],
+        ["なまえ","名前","namae","nama","identitas","名 (na, nama) + 前 (mae, depan)"],
+        ["じゅうしょ","住所","juusho","alamat","identitas","住 (juu, tinggal) + 所 (sho, tempat)"],
+        ["ちず","地図","chizu","peta","benda","地 (chi, bumi) + 図 (zu, gambar)"],
+        ["しお","塩","shio","garam","benda","塩 (shio, garam)"],
+        ["さとう","砂糖","satou","gula","benda","砂 (sa, pasir) + 糖 (tou, gula)"],
+        ["もんだい","問題","mondai","masalah, soal","benda","問 (mon, pertanyaan) + 題 (dai, topik)"],
+        ["こたえ","答え","kotae","jawaban","benda","答 (kotae, jawaban)"],
+        ["よみかた","読み方","yomikata","cara membaca","ekspresi","読 (yomi, membaca) + 方 (kata, cara)"],
+        ["〜かた","〜方","~kata","cara ~","ekspresi","方 (kata, cara)"],
+        ["まっすぐ","","massugu","lurus","ekspresi",""],
+        ["ゆっくり","","yukkuri","pelan-pelan","ekspresi",""],
+        ["すぐ","","sugu","segera, langsung","ekspresi",""],
+        ["また","","mata","lagi","ekspresi",""],
+        ["あとで","","atode","nanti","waktu",""],
+        ["もう すこし","もう少し","mou sukoshi","sedikit lagi","ekspresi","少 (suko, sedikit)"],
+        ["もう〜","","mou ~","~ lagi","ekspresi",""],
+        ["さあ","","saa","mari","ekspresi",""],
+        ["あれ？","","are?","ah?","ekspresi",""],
+        ["しんごうを みぎへ まがって ください","","shingou o migi e magatte kudasai","tolong belok ke kanan di lampu lalu lintas","ekspresi",""],
+        ["これで おねがいします","","kore de onegaishimasu","minta dengan ini","ekspresi",""],
+        ["おつり","","otsuri","uang kembalian","benda",""]
+    ],
+15: [
+        ["おきます","置きます","okimasu","meletakkan, menaruh","aktivitas","置 (oki, meletakkan)"],
+        ["つくります","作ります","tsukurimasu","membuat, membangun, memproduksi","aktivitas","作 (tsukuri, membuat)"],
+        ["うります","売ります","urimasu","menjual","aktivitas","売 (uri, menjual)"],
+        ["しります","知ります","shirimasu","mengetahui, mengenal","aktivitas","知 (shiri, mengetahui)"],
+        ["すみます","住みます","sumimasu","tinggal","aktivitas","住 (sumi, tinggal)"],
+        ["けんきゅうします","研究します","kenkyuu shimasu","meneliti","aktivitas","研 (ken, meneliti) + 究 (kyuu, menyelidiki)"],
+        ["しりょう","資料","shiryou","data, bahan","benda","資 (shi, sumber) + 料 (ryou, bahan)"],
+        ["カタログ","","katarogu","katalog","benda",""],
+        ["じこくひょう","時刻表","jikokuhyou","jadwal","benda","時 (ji, waktu) + 刻 (koku, saat) + 表 (hyou, tabel)"],
+        ["ふく","服","fuku","baju","benda","服 (fuku, pakaian)"],
+        ["せいひん","製品","seihin","produk","benda","製 (sei, membuat) + 品 (hin, barang)"],
+        ["ソフト","","sofuto","perangkat lunak","benda",""],
+        ["でんしじしょ","電子辞書","denshi jisho","kamus elektronik","benda","電 (den, listrik) + 子 (shi, elektronik) + 辞 (ji, kata) + 書 (sho, buku)"],
+        ["けいざい","経済","keizai","ekonomi","benda","経 (kei, mengatur) + 済 (zai, selesai)"],
+        ["しやくしょ","市役所","shiyakusho","kantor wali kota","tempat","市 (shi, kota) + 役 (yaku, tugas) + 所 (sho, tempat)"],
+        ["こうこう","高校","koukou","SMA","tempat","高 (kou, tinggi) + 校 (kou, sekolah)"],
+        ["はいしゃ","歯医者","haisha","dokter gigi","orang","歯 (ha, gigi) + 医 (i, dokter) + 者 (sha, orang)"],
+        ["どくしん","独身","dokushin","bujangan, belum berkeluarga","orang","独 (doku, sendiri) + 身 (shin, diri)"],
+        ["すみません","","sumimasen","maaf","ekspresi",""],
+        ["みなさん","皆さん","minasan","semuanya, bapak-bapak dan ibu-ibu sekalian","orang","皆 (mina, semua)"],
+        ["おもいだします","思い出します","omoidashimasu","teringat","aktivitas","思 (omoi, berpikir) + 出 (da, keluar)"],
+        ["いらっしゃいます","","irasshaimasu","bentuk hormat dari います","aktivitas",""]
+    ],
+16: [
+        ["のります","乗ります","norimasu","naik","aktivitas","乗 (nori, naik)"],
+        ["おります","降ります","orimasu","turun","aktivitas","降 (ori, turun)"],
+        ["のりかえます","乗り換えます","norikaemasu","ganti, pindah","aktivitas","乗 (nori, naik) + 換 (kae, ganti)"],
+        ["あびます","浴びます","abimasu","mandi","aktivitas","浴 (abi, mandi)"],
+        ["いれます","入れます","iremasu","memasukkan","aktivitas","入 (ire, masuk)"],
+        ["だします","出します","dashimasu","mengeluarkan, menyerahkan, mengirim","aktivitas","出 (da, keluar)"],
+        ["おろします","下ろします","oroshimasu","mengeluarkan, mengambil uang","aktivitas","下 (oro, turunkan)"],
+        ["はいります","入ります","hairimasu","masuk","aktivitas","入 (hai, masuk)"],
+        ["でます","出ます","demasu","tamat, keluar","aktivitas","出 (de, keluar)"],
+        ["おします","押します","oshimasu","menekan","aktivitas","押 (oshi, tekan)"],
+        ["のみます","飲みます","nomimasu","minum","aktivitas","飲 (nomi, minum)"],
+        ["はじめます","始めます","hajimemasu","mulai","aktivitas","始 (haji, mulai)"],
+        ["けんがくします","見学します","kengaku shimasu","mengunjungi","aktivitas","見 (ken, melihat) + 学 (gaku, belajar)"],
+        ["でんわします","電話します","denwa shimasu","menelepon","aktivitas","電 (den, listrik) + 話 (wa, bicara)"],
+        ["わかい","若い","wakai","muda","ekspresi","若 (waka, muda)"],
+        ["ながい","長い","nagai","panjang","ekspresi","長 (naga, panjang)"],
+        ["みじかい","短い","mijikai","pendek","ekspresi","短 (mijika, pendek)"],
+        ["あかるい","明るい","akarui","terang","ekspresi","明 (aka, terang)"],
+        ["くらい","暗い","kurai","gelap","ekspresi","暗 (kura, gelap)"],
+        ["からだ","体","karada","badan","tubuh","体 (karada, tubuh)"],
+        ["あたま","頭","atama","kepala","tubuh","頭 (atama, kepala)"],
+        ["かみ","髪","kami","rambut","tubuh","髪 (kami, rambut)"],
+        ["かお","顔","kao","muka","tubuh","顔 (kao, wajah)"],
+        ["め","目","me","mata","tubuh","目 (me, mata)"],
+        ["みみ","耳","mimi","telinga","tubuh","耳 (mimi, telinga)"],
+        ["はな","鼻","hana","hidung","tubuh","鼻 (hana, hidung)"],
+        ["くち","口","kuchi","mulut","tubuh","口 (kuchi, mulut)"],
+        ["は","歯","ha","gigi","tubuh","歯 (ha, gigi)"],
+        ["おなか","","onaka","perut","tubuh",""],
+        ["あし","足","ashi","kaki","tubuh","足 (ashi, kaki)"],
+        ["せ","背","se","punggung","tubuh","背 (se, punggung)"],
+        ["サービス","","saabisu","pelayanan","benda",""],
+        ["ジョギング","","jogingu","joging","aktivitas",""],
+        ["シャワー","","shawaa","shower","benda",""],
+        ["みどり","緑","midori","hijau","warna","緑 (midori, hijau)"],
+        ["おてら","お寺","otera","wihara","tempat","寺 (tera, kuil Buddha)"],
+        ["じんじゃ","神社","jinja","kuil Shinto","tempat","神 (jin, dewa) + 社 (ja, kuil)"],
+        ["〜ばん","〜番","~ban","nomor ~","angka","番 (ban, nomor)"],
+        ["どうやって","","douyatte","dengan cara bagaimana","kata tanya",""],
+        ["どの〜","","dono~","~ yang mana","kata tanya",""],
+        ["どれ","","dore","mana","kata tanya",""],
+        ["すごいですね","","sugoi desu ne","hebat","ekspresi",""],
+        ["いいえ、まだまだです","","iie, madamada desu","tidak, belum memuaskan","ekspresi",""],
+        ["おかねおろしですか","","okane oroshi desu ka","mau menarik uang?","ekspresi",""],
+        ["まず","","mazu","pertama-tama","ekspresi",""],
+        ["つぎに","次に","tsugi ni","kemudian","ekspresi","次 (tsugi, berikutnya)"],
+        ["キャッシュカード","","kyasshu kaado","kartu ATM","benda",""],
+        ["あんしょうばんごう","暗証番号","anshou bangou","PIN","benda","暗 (an, rahasia) + 証 (shou, bukti) + 番 (ban, nomor) + 号 (gou, nomor)"],
+        ["きんがく","金額","kingaku","jumlah uang","benda","金 (kin, uang) + 額 (gaku, jumlah)"],
+        ["かくにん","確認","kakunin","cek, memastikan","aktivitas","確 (kaku, pasti) + 認 (nin, memastikan)"],
+        ["ボタン","","botan","tombol","benda",""]
+    ],
+17: [
+        ["おぼえます","覚えます","oboemasu","mengingat, menghafal","aktivitas","覚 (oboe, ingat)"],
+        ["わすれます","忘れます","wasuremasu","lupa","aktivitas","忘 (wasure, lupa)"],
+        ["なくします","","nakushimasu","kehilangan","aktivitas",""],
+        ["はらいます","払います","haraimasu","membayar","aktivitas","払 (harai, membayar)"],
+        ["かえします","返します","kaeshimasu","mengembalikan","aktivitas","返 (kae, mengembalikan)"],
+        ["でかけます","出かけます","dekakemasu","pergi, keluar, berangkat","aktivitas","出 (de, keluar)"],
+        ["ぬぎます","脱ぎます","nugimasu","melepas, membuka pakaian","aktivitas","脱 (nugi, melepas)"],
+        ["もっていきます","持って行きます","motte ikimasu","membawa pergi","aktivitas","持 (mo, membawa) + 行 (iki, pergi)"],
+        ["もってきます","持って来ます","motte kimasu","membawa datang","aktivitas","持 (mo, membawa) + 来 (ki, datang)"],
+        ["しんぱいします","心配します","shinpai shimasu","mengkhawatirkan","aktivitas","心 (shin, hati) + 配 (pai, perhatian)"],
+        ["ざんぎょうします","残業します","zangyou shimasu","lembur","aktivitas","残 (zan, sisa) + 業 (gyou, pekerjaan)"],
+        ["しゅっちょうします","出張します","shucchou shimasu","dinas","aktivitas","出 (shutsu, keluar) + 張 (chou, perjalanan tugas)"],
+        ["のみます","飲みます","nomimasu","minum obat","aktivitas","飲 (nomi, minum)"],
+        ["はいります","入ります","hairimasu","mandi, masuk ofuro","aktivitas","入 (hai, masuk)"],
+        ["たいせつ","大切[な]","taisetsu","penting, berharga","ekspresi","大 (tai, besar) + 切 (setsu, penting)"],
+        ["だいじょうぶ","大丈夫[な]","daijoubu","tidak apa-apa","ekspresi","大 (dai, besar) + 丈 (jou) + 夫 (bu)"],
+        ["あぶない","危ない","abunai","berbahaya","ekspresi","危 (abu, bahaya)"],
+        ["きんえん","禁煙","kin'en","dilarang merokok","ekspresi","禁 (kin, larang) + 煙 (en, asap rokok)"],
+        ["けんこうほけんしょう","健康保険証","kenkou hokenshou","kartu asuransi kesehatan","dokumen","健 (ken, sehat) + 康 (kou, sehat) + 保 (ho, jaga) + 険 (ken, asuransi) + 証 (shou, kartu/bukti)"],
+        ["ねつ","熱","netsu","demam","kesehatan","熱 (netsu, panas/demam)"],
+        ["びょうき","病気","byouki","sakit","kesehatan","病 (byou, penyakit) + 気 (ki, kondisi)"],
+        ["くすり","薬","kusuri","obat","kesehatan","薬 (kusuri, obat)"],
+        ["おふろ","お風呂","ofuro","mandi, kamar mandi","tempat","風 (fu, angin) + 呂 (ro, pemandian)"],
+        ["うわぎ","上着","uwagi","baju, jaket","benda","上 (uwa, atas) + 着 (gi, pakaian)"],
+        ["したぎ","下着","shitagi","pakaian dalam","benda","下 (shita, bawah) + 着 (gi, pakaian)"],
+        ["ふつか みっか","２、３日","futsuka mikka","dua atau tiga hari","waktu","日 (ka/nichi, hari)"],
+        ["２、３〜","","ni-san ~","dua atau tiga ~","angka",""],
+        ["〜までに","","~ made ni","sampai dengan","waktu",""],
+        ["ですから","","desukara","oleh karena itu","ekspresi",""],
+        ["どうしましたか","","dou shimashita ka","kenapa? ada masalah apa?","ekspresi",""],
+        ["のど","","nodo","kerongkongan","tubuh",""],
+        ["〜が いたいです","","~ ga itai desu","~ sakit","ekspresi",""],
+        ["かぜ","","kaze","masuk angin","kesehatan",""],
+        ["それから","","sorekara","dan, kemudian","ekspresi",""],
+        ["おだいじに","お大事に","odaiji ni","semoga lekas sembuh","ekspresi","大 (dai, penting) + 事 (ji, urusan)"]
+    ],
+18: [
+        ["できます","","dekimasu","dapat, bisa, mampu","aktivitas",""],
+        ["あらいます","洗います","araimasu","mencuci","aktivitas","洗 (arai, cuci)"],
+        ["ひきます","弾きます","hikimasu","bermain alat musik","aktivitas","弾 (hiki, memainkan)"],
+        ["うたいます","歌います","utaimasu","bernyanyi","aktivitas","歌 (uta, lagu)"],
+        ["あつめます","集めます","atsumemasu","mengumpulkan","aktivitas","集 (atsume, kumpulkan)"],
+        ["すてます","捨てます","sutemasu","membuang","aktivitas","捨 (sute, buang)"],
+        ["かえます","換えます","kaemasu","mengganti, menukar","aktivitas","換 (kae, tukar)"],
+        ["うんてんします","運転します","unten shimasu","menyetir, mengendarai","aktivitas","運 (un, mengangkut) + 転 (ten, memutar)"],
+        ["よやくします","予約します","yoyaku shimasu","memesan","aktivitas","予 (yo, sebelumnya) + 約 (yaku, janji)"],
+        ["ピアノ","","piano","piano","benda",""],
+        ["〜メートル","","~ meetoru","~ meter","satuan",""],
+        ["げんきん","現金","genkin","uang tunai","uang","現 (gen, nyata) + 金 (kin, uang)"],
+        ["しゅみ","趣味","shumi","hobi, kegemaran","hobi","趣 (shu, minat) + 味 (mi, rasa)"],
+        ["にっき","日記","nikki","catatan harian","dokumen","日 (nichi, hari) + 記 (ki, catatan)"],
+        ["おいのり","お祈り","oinori","doa","aktivitas","祈 (inori, berdoa)"],
+        ["かちょう","課長","kachou","kepala seksi","orang","課 (ka, seksi) + 長 (chou, kepala)"],
+        ["ぶちょう","部長","buchou","kepala bagian","orang","部 (bu, bagian) + 長 (chou, kepala)"],
+        ["しゃちょう","社長","shachou","direktur utama","orang","社 (sha, perusahaan) + 長 (chou, kepala)"],
+        ["どうぶつ","動物","doubutsu","hewan, binatang","hewan","動 (dou, bergerak) + 物 (butsu, benda)"],
+        ["うま","馬","uma","kuda","hewan","馬 (uma, kuda)"],
+        ["インターネット","","intaanetto","internet","benda",""],
+        ["とくに","","tokuni","terutama, khususnya","ekspresi",""],
+        ["へえ","","hee","betul ya?, masa!","ekspresi",""],
+        ["それは おもしろいですね。","","sore wa omoshiroi desu ne","itu menarik ya","ekspresi",""],
+        ["なかなか","","nakanaka","jarang, tidak mudah","ekspresi",""],
+        ["ほんとうですか。","","hontou desu ka","betul? benar?","ekspresi",""],
+        ["ぜひ","","zehi","benar-benar, mesti","ekspresi",""]
+    ],
+19: [
+        ["のぼります","登ります、上ります","noborimasu","naik","aktivitas","登 (nobo, mendaki)"],
+        ["とまります","泊まります","tomarimasu","menginap","aktivitas","泊 (toma, menginap)"],
+        ["そうじします","掃除します","souji shimasu","membersihkan","aktivitas","掃 (sou, menyapu) + 除 (jo, membersihkan)"],
+        ["せんたくします","洗濯します","sentaku shimasu","mencuci pakaian","aktivitas","洗 (sen, mencuci) + 濯 (taku, membilas)"],
+        ["なります","","narimasu","menjadi","aktivitas",""],
+        ["ねむい","眠い","nemui","mengantuk","sifat","眠 (nemu, tidur)"],
+        ["つよい","強い","tsuyoi","kuat","sifat","強 (tsuyo, kuat)"],
+        ["よわい","弱い","yowai","lemah","sifat","弱 (yowa, lemah)"],
+        ["れんしゅう","練習","renshuu","latihan","aktivitas","練 (ren, melatih) + 習 (shuu, belajar)"],
+        ["ゴルフ","","gorufu","golf","hobi",""],
+        ["すもう","相撲","sumou","sumo","hobi","相撲 (sumou)"],
+        ["おちゃ","お茶","ocha","upacara minum teh","makanan","茶 (cha, teh)"],
+        ["ひ","日","hi","hari","waktu","日 (hi, hari)"],
+        ["ちょうし","調子","choushi","kondisi","umum","調 (chou, menyesuaikan) + 子 (shi, keadaan)"],
+        ["いちど","一度","ichido","sekali","keterangan","一 (ichi, satu) + 度 (do, kali)"],
+        ["いちども","一度も","ichidomo","sekali-kali pun","keterangan",""],
+        ["だんだん","","dandan","berangsur-angsur","keterangan",""],
+        ["もうすぐ","","mousugu","tidak lama lagi","keterangan",""],
+        ["おかげさまで","","okagesama de","atas berkat","ekspresi",""],
+        ["でも","","demo","tetapi","kata hubung",""],
+        ["かんぱい","乾杯","kanpai","toast","ekspresi","乾 (kan, kering) + 杯 (pai, cangkir)"],
+        ["ダイエット","","daietto","diet","umum",""],
+        ["むり","無理","muri","paksa, berlebihan","sifat","無 (mu, tidak ada) + 理 (ri, alasan)"],
+        ["からだに いい","","karada ni ii","baik untuk tubuh","ekspresi",""]
+    ],
+20: [
+        ["いります","要ります","irimasu","memerlukan","aktivitas","要 (i, perlu)"],
+        ["しらべます","調べます","shirabemasu","memeriksa, meneliti, mengecek","aktivitas","調 (shirabe, memeriksa)"],
+        ["しゅうりします","修理します","shuuri shimasu","memperbaiki","aktivitas","修 (shuu, memperbaiki) + 理 (ri, mengatur)"],
+        ["ぼく","僕","boku","aku","orang","僕 (boku, aku laki-laki)"],
+        ["きみ","君","kimi","kamu","orang","君 (kimi, kamu)"],
+        ["〜くん","〜君","~kun","sdr. ~","sapaan","君 (kun)"],
+        ["うん","","un","ya","ekspresi",""],
+        ["ううん","","uun","tidak, bukan","ekspresi",""],
+        ["ことば","","kotoba","kata, bahasa","bahasa",""],
+        ["きもの","着物","kimono","kimono","benda","着 (ki, memakai) + 物 (mono, benda)"],
+        ["ビザ","","biza","visa","dokumen",""],
+        ["はじめ","初め","hajime","awal, mula-mula","waktu","初 (haji, pertama)"],
+        ["おわり","終わり","owari","akhir","waktu","終 (owa, akhir)"],
+        ["こっち","","kocchi","sini","petunjuk",""],
+        ["そっち","","socchi","situ","petunjuk",""],
+        ["あっち","","acchi","sana","petunjuk",""],
+        ["どっち","","docchi","mana","kalimat tanya",""],
+        ["みんなで","","minna de","kita semua, kita sama-sama","ekspresi",""],
+        ["〜けど","","~kedo","~ tetapi","kata hubung",""],
+        ["おなかが いっぱいです","","onaka ga ippai desu","sudah kenyang","ekspresi",""],
+        ["よかったら","","yokattara","kalau mau, kalau suka","ekspresi",""],
+        ["いろいろ","","iroiro","macam-macam","keterangan",""]
+    ],
+21: [
+        ["おもいます","思います","omoimasu","mengira, berpikir","aktivitas","思 (omoi, pikir)"],
+        ["いいます","言います","iimasu","mengatakan, berkata","aktivitas","言 (ii, berkata)"],
+        ["かちます","勝ちます","kachimasu","menang","aktivitas","勝 (kachi, menang)"],
+        ["まけます","負けます","makemasu","kalah","aktivitas","負 (make, kalah)"],
+        ["あります","","arimasu","ada, diadakan","aktivitas",""],
+        ["やくに たちます","役に立ちます","yaku ni tachimasu","berguna, bermanfaat","aktivitas","役 (yaku, peran) + 立 (ta, berdiri)"],
+        ["うごきます","動きます","ugokimasu","pindah, bergerak","aktivitas","動 (ugo, bergerak)"],
+        ["やめます","","yamemasu","berhenti","aktivitas",""],
+        ["きを つけます","気をつけます","ki o tsukemasu","berwaspada, berhati-hati","aktivitas","気 (ki, perasaan)"],
+        ["りゅうがくします","留学します","ryuugaku shimasu","studi di luar negeri","aktivitas","留 (ryuu, tinggal) + 学 (gaku, belajar)"],
+        ["むだ","無駄","muda","sia-sia, tidak berguna","sifat","無 (mu, tidak ada) + 駄 (da, sia-sia)"],
+        ["ふべん","不便","fuben","tidak praktis","sifat","不 (fu, tidak) + 便 (ben, praktis)"],
+        ["すごい","","sugoi","hebat, luar biasa","sifat",""],
+        ["ほんとう","本当","hontou","betul, benar","ekspresi","本 (hon, asli) + 当 (tou, tepat)"],
+        ["うそ","","uso","bohong","ekspresi",""],
+        ["じどうしゃ","自動車","jidousha","mobil","kendaraan","自 (ji, sendiri) + 動 (dou, bergerak) + 車 (sha, kendaraan)"],
+        ["こうつう","交通","koutsuu","lalu lintas","umum","交 (kou, saling) + 通 (tsuu, lewat)"],
+        ["ぶっか","物価","bukka","harga barang","ekonomi","物 (butsu, barang) + 価 (ka, nilai)"],
+        ["ほうそう","放送","housou","siaran, pengumuman","media","放 (hou, menyebar) + 送 (sou, mengirim)"],
+        ["ニュース","","nyuusu","warta berita","media",""],
+        ["アニメ","","anime","animasi","hiburan",""],
+        ["マンガ","","manga","manga, komik","hiburan",""],
+        ["デザイン","","dezain","desain, model","umum",""],
+        ["ゆめ","夢","yume","mimpi","umum","夢 (yume, mimpi)"],
+        ["てんさい","天才","tensai","genius","orang","天 (ten, langit) + 才 (sai, bakat)"],
+        ["しあい","試合","shiai","pertandingan","olahraga","試 (shi, mencoba) + 合 (ai, bertemu)"],
+        ["いけん","意見","iken","pendapat","umum","意 (i, pendapat) + 見 (ken, melihat)"],
+        ["はなし","話","hanashi","cerita","umum","話 (hana, berbicara)"],
+        ["ちきゅう","地球","chikyuu","bumi","alam","地 (chi, tanah) + 球 (kyuu, bola)"],
+        ["つき","月","tsuki","bulan","alam","月 (tsuki, bulan)"],
+        ["さいきん","最近","saikin","akhir-akhir ini","waktu","最 (sai, paling) + 近 (kin, dekat)"],
+        ["たぶん","","tabun","mungkin, barangkali","keterangan",""],
+        ["きっと","","kitto","pasti","keterangan",""],
+        ["ほんとうに","","hontou ni","betul-betul","keterangan",""],
+        ["そんなに","","sonna ni","tidak begitu","keterangan",""],
+        ["〜について","","~ ni tsuite","tentang, mengenai ~","pola",""],
+        ["ひさしぶりですね。","","hisashiburi desu ne","sudah lama tidak bertemu","ekspresi",""],
+        ["〜でも のみませんか。","","~ demo nomimasen ka","bagaimana kalau kita minum ~?","ekspresi",""],
+        ["もちろん","","mochiron","tentu saja","ekspresi",""],
+        ["もう かえらないと……。","","mou kaeranai to","saya harus pulang","ekspresi",""]
+    ],
+22: [
+        ["きます","着ます","kimasu","memakai (kemeja)","aktivitas","着 (ki, memakai)"],
+        ["はきます","","hakimasu","memakai (sepatu, celana)","aktivitas",""],
+        ["かぶります","","kaburimasu","memakai (topi)","aktivitas",""],
+        ["かけます","","kakemasu","memakai (kacamata)","aktivitas",""],
+        ["します","","shimasu","memakai (dasi)","aktivitas",""],
+        ["うまれます","生まれます","umaremasu","lahir","aktivitas","生 (uma, lahir)"],
+        ["わたしたち","","watashitachi","kami, kita","orang",""],
+        ["コート","","kooto","mantal","pakaian",""],
+        ["セーター","","seetaa","sweater, baju hangat","pakaian",""],
+        ["スーツ","","suutsu","pakaian setelan","pakaian",""],
+        ["ぼうし","帽子","boushi","topi","pakaian","帽 (bou, topi) + 子 (shi)"],
+        ["めがね","眼鏡","megane","kaca mata","pakaian","眼 (me, mata) + 鏡 (gane, cermin)"],
+        ["ケーキ","","keeki","kue","makanan",""],
+        ["おべんとう","お弁当","obentou","bekal","makanan","弁当 (bentou, bekal)"],
+        ["ロボット","","robotto","robot","benda",""],
+        ["ユーモア","","yuumoa","humor","umum",""],
+        ["つごう","都合","tsugou","kondisi","umum","都 (to, kota) + 合 (gou, cocok)"],
+        ["よく","","yoku","sering kali","keterangan",""],
+        ["えーと","","eeto","itu...","ekspresi",""],
+        ["おめでとう ございます。","","omedetou gozaimasu","selamat","ekspresi",""],
+        ["おさがしですか。","","osagashi desu ka","mencari apa?","ekspresi",""],
+        ["では","","dewa","kalau begitu","ekspresi",""],
+        ["こちら","","kochira","ini","petunjuk",""],
+        ["やちん","家賃","yachin","biaya sewa rumah","rumah","家 (ya, rumah) + 賃 (chin, sewa)"],
+        ["ダイニングキッチン","","dainingu kicchin","ruang makan dengan dapur","rumah",""],
+        ["わしつ","和室","washitsu","kamar ala Jepang","rumah","和 (wa, Jepang) + 室 (shitsu, kamar)"],
+        ["おしいれ","押し入れ","oshiire","lemari dinding ala Jepang","rumah","押 (oshi, dorong) + 入 (ire, masuk)"],
+        ["ふとん","布団","futon","selimut dan kasur berisi kapas ala Jepang","rumah","布 (fu, kain) + 団 (ton)"]
+    ],
+23: [
+        ["ききます","聞きます","kikimasu","bertanya [kepada guru]","aktivitas","聞 (ki, mendengar/bertanya)"],
+        ["まわします","回します","mawashimasu","memutar","aktivitas","回 (mawa, putar)"],
+        ["ひきます","引きます","hikimasu","menarik","aktivitas","引 (hi, tarik)"],
+        ["かえます","変えます","kaemasu","mengubah","aktivitas","変 (kae, berubah)"],
+        ["さわります","触ります","sawarimasu","menyentuh [pintu]","aktivitas","触 (sawa, sentuh)"],
+        ["でます","出ます","demasu","keluar [uang kembalian]","aktivitas","出 (de, keluar)"],
+        ["あるきます","歩きます","arukimasu","berjalan kaki","aktivitas","歩 (aru, jalan)"],
+        ["わたります","渡ります","watarimasu","menyeberang [jembatan]","aktivitas","渡 (wata, menyeberang)"],
+        ["まがります","曲がります","magarimasu","belok [ke kanan]","aktivitas","曲 (maga, belok)"],
+        ["さびしい","寂しい","sabishii","sepi","sifat","寂 (sabi, sepi)"],
+        ["おゆ","お湯","oyu","air panas","benda","湯 (yu, air panas)"],
+        ["おと","音","oto","bunyi, suara","benda","音 (oto, suara)"],
+        ["サイズ","","saizu","ukuran","umum",""],
+        ["こしょう","故障","koshou","kerusakan","umum","故 (ko) + 障 (shou)"],
+        ["みち","道","michi","jalan","tempat","道 (michi, jalan)"],
+        ["こうさてん","交差点","kousaten","perempatan","tempat","交差 (persimpangan) + 点 (ten)"],
+        ["しんごう","信号","shingou","lampu lalu lintas","tempat","信号 (shingou, sinyal)"],
+        ["かど","角","kado","sudut","tempat","角 (kado, sudut)"],
+        ["はし","橋","hashi","jembatan","tempat","橋 (hashi, jembatan)"],
+        ["ちゅうしゃじょう","駐車場","chuushajou","tempat parkir","tempat","駐車 (parkir) + 場 (tempat)"],
+        ["たてもの","建物","tatemono","gedung","tempat","建物 (tatemono, bangunan)"],
+        ["なんかいも","何回も","nankaimo","berkali-kali","keterangan","何 (nan) + 回 (kai)"],
+        ["いちめ","一目","ichime","yang ke-1","keterangan","一 (ichi) + 目 (me, urutan)"]
+    ],
+24: [
+        ["くれます","","kuremasu","diberikan","aktivitas",""],
+        ["なおします","直します","naoshimasu","mengoreksi","aktivitas","直 (nao, memperbaiki)"],
+        ["つれていきます","連れて行きます","tsurete ikimasu","membawa, mengajak pergi","aktivitas","連 (tsure, membawa) + 行 (iku, pergi)"],
+        ["つれてきます","連れて来ます","tsurete kimasu","membawa datang, mengajak datang","aktivitas","連 (tsure) + 来 (kuru, datang)"],
+        ["おくります","送ります","okurimasu","mengantar [orang]","aktivitas","送 (oku, mengantar)"],
+        ["しょうかいします","紹介します","shoukai shimasu","memperkenalkan","aktivitas","紹介 (perkenalan)"],
+        ["あんないします","案内します","annai shimasu","mengantarkan, memandu","aktivitas","案内 (panduan)"],
+        ["せつめいします","説明します","setsumei shimasu","menjelaskan, menerangkan","aktivitas","説明 (penjelasan)"],
+        ["おじいさん","","ojiisan","kakek","orang",""],
+        ["おじいちゃん","","ojiichan","kakek (akrab)","orang",""],
+        ["おばあさん","","obaasan","nenek","orang",""],
+        ["おばあちゃん","","obaachan","nenek (akrab)","orang",""],
+        ["じゅんび","準備","junbi","persiapan","umum","準備 (persiapan)"],
+        ["ひっこし","引っ越し","hikkoshi","pindah rumah","umum","引越 (pindah rumah)"],
+        ["おかし","お菓子","okashi","kue","makanan","菓子 (kashi, kue/manisan)"],
+        ["ホームステイ","","hoomusutei","homestay","tempat",""],
+        ["ぜんぶ","全部","zenbu","semua","keterangan","全部 (semuanya)"],
+        ["じぶんで","自分で","jibun de","dengan sendiri","keterangan","自分 (diri sendiri)"],
+
+        // Kaiwa
+        ["ほかに","","hokani","selain, yang lain","kaiwa",""]
+    ],
+25: [
+        ["かんがえます","考えます","kangaemasu","berpikir, memikirkan","aktivitas","考 (kangae, berpikir)"],
+        ["つきます","着きます","tsukimasu","tiba, sampai","aktivitas","着 (tsu, tiba)"],
+        ["とります","取ります","torimasu","berumur, lanjut usia","aktivitas","取 (to, mengambil)"],
+        ["たりません","足りません","tarimasen","cukup","aktivitas","足 (ta, cukup)"],
+        ["いなか","田舎","inaka","desa, kampung halaman","tempat","田舎 (inaka, pedesaan)"],
+        ["チャンス","","chansu","kesempatan","umum",""],
+        ["おく","億","oku","ratus juta","angka","億 = 100.000.000"],
+        ["もし","","moshi","kalau","keterangan",""],
+        ["いみ","意味","imi","arti, makna","umum","意味 (imi, arti)"],
+
+        // Renshuu C
+        ["もしもし","","moshi moshi","halo (digunakan ketika menelepon)","renshuu",""],
+
+        // Kaiwa
+        ["てんきん","転勤","tenkin","pindah ke kantor cabang lain atau jabatan lain","kaiwa","転勤 (mutasi kerja)"],
+        ["こと","事","koto","hal","kaiwa","事 (koto, hal)"],
+        ["ひま","暇","hima","waktu luang","kaiwa","暇 (hima, senggang)"],
+        ["おせわになりました","お世話になりました","osewa ni narimashita","terima kasih banyak atas bantuan Anda","kaiwa","ungkapan terima kasih"],
+        ["がんばります","頑張ります","ganbarimasu","berusaha, bekerja keras","kaiwa","頑張 (ganba, berusaha)"],
+        ["どうぞおげんきで","どうぞお元気で","douzo ogenki de","semoga sehat-sehat selalu","kaiwa","ungkapan perpisahan"]
+    ],
+    
+    26: [
+    // ===== ANGKA =====
+    ["一","","","satu","angka","On: イチ (ichi), イツ (itsu) | Kun: ひと (hito), ひとつ (hitotsu) | Contoh: 一人（ひとり）= satu orang"],
+    ["二","","","dua","angka","On: ニ (ni) | Kun: ふた (futa), ふたつ (futatsu) | Contoh: 二人（ふたり）= dua orang"],
+    ["三","","","tiga","angka","On: サン (san) | Kun: み (mi), みっつ (mittsu) | Contoh: 三日（みっか）= tanggal 3"],
+    ["四","","","empat","angka","On: シ (shi) | Kun: よん (yon), よ (yo) | Contoh: 四日（よっか）= tanggal 4"],
+    ["五","","","lima","angka","On: ゴ (go) | Kun: いつ (itsu), いつつ (itsutsu) | Contoh: 五日（いつか）= tanggal 5"],
+    ["六","","","enam","angka","On: ロク (roku) | Kun: む (mu), むいか (muika) | Contoh: 六日（むいか）= tanggal 6"],
+    ["七","","","tujuh","angka","On: シチ (shichi) | Kun: なな (nana) | Contoh: 七日（なのか）= tanggal 7"],
+    ["八","","","delapan","angka","On: ハチ (hachi) | Kun: や (ya), やっつ (yattsu) | Contoh: 八日（ようか）= tanggal 8"],
+    ["九","","","sembilan","angka","On: キュウ (kyuu), ク (ku) | Kun: ここの (kokono) | Contoh: 九日（ここのか）= tanggal 9"],
+    ["十","","","sepuluh","angka","On: ジュウ (juu) | Kun: とお (too) | Contoh: 十日（とおか）= tanggal 10"],
+    ["百","","","seratus","angka","On: ヒャク (hyaku) | Contoh: 百円（ひゃくえん）= 100 yen"],
+    ["千","","","seribu","angka","On: セン (sen) | Contoh: 千円（せんえん）= 1000 yen"],
+    ["万","","","sepuluh ribu","angka","On: マン (man) | Contoh: 一万円（いちまんえん）= 10.000 yen"],
+    ["円","","","yen","angka","On: エン (en) | Kun: まるい (marui) | Contoh: 百円（ひゃくえん）= 100 yen"],
+
+    // ===== WAKTU =====
+    ["日","","","hari, matahari","waktu","On: ニチ (nichi), ジツ (jitsu) | Kun: ひ (hi), び (bi), か (ka) | Contoh: 日本（にほん）= Jepang"],
+    ["月","","","bulan","waktu","On: ゲツ (getsu), ガツ (gatsu) | Kun: つき (tsuki) | Contoh: 毎月（まいつき）= setiap bulan"],
+    ["年","","","tahun","waktu","On: ネン (nen) | Kun: とし (toshi) | Contoh: 今年（ことし）= tahun ini"],
+    ["時","","","jam, waktu","waktu","On: ジ (ji) | Kun: とき (toki) | Contoh: 一時（いちじ）= jam 1"],
+    ["分","","","menit, bagian","waktu","On: ブン (bun), フン (fun), プン (pun) | Kun: わける (wakeru) | Contoh: 五分（ごふん）= 5 menit"],
+    ["半","","","setengah","waktu","On: ハン (han) | Kun: なかば (nakaba) | Contoh: 二時半（にじはん）= jam 2:30"],
+
+    // ===== ALAM =====
+    ["火","","","api","alam","On: カ (ka) | Kun: ひ (hi) | Contoh: 火曜日（かようび）= Selasa"],
+    ["水","","","air","alam","On: スイ (sui) | Kun: みず (mizu) | Contoh: 水曜日（すいようび）= Rabu"],
+    ["木","","","pohon","alam","On: モク (moku), ボク (boku) | Kun: き (ki) | Contoh: 木曜日（もくようび）= Kamis"],
+    ["金","","","emas, uang","alam","On: キン (kin), コン (kon) | Kun: かね (kane) | Contoh: お金（おかね）= uang"],
+    ["土","","","tanah","alam","On: ド (do), ト (to) | Kun: つち (tsuchi) | Contoh: 土曜日（どようび）= Sabtu"],
+    ["山","","","gunung","alam","On: サン (san) | Kun: やま (yama) | Contoh: 富士山（ふじさん）= Gunung Fuji"],
+    ["川","","","sungai","alam","On: セン (sen) | Kun: かわ (kawa) | Contoh: 川（かわ）= sungai"],
+    ["田","","","sawah","alam","On: デン (den) | Kun: た (ta) | Contoh: 田中（たなか）= Tanaka (nama keluarga Jepang)"],
+    ["雨","","","hujan","alam","On: ウ (u) | Kun: あめ (ame) | Contoh: 雨の日（あめのひ）= hari hujan"],
+    ["天","","","langit","alam","On: テン (ten) | Kun: あま (ama) | Contoh: 天気（てんき）= cuaca"],
+
+    // ===== TUBUH =====
+    ["口","","","mulut","tubuh","On: コウ (kou), ク (ku) | Kun: くち (kuchi) | Contoh: 入口（いりぐち）= pintu masuk"],
+    ["目","","","mata","tubuh","On: モク (moku) | Kun: め (me) | Contoh: 目（め）= mata"],
+    ["耳","","","telinga","tubuh","On: ジ (ji) | Kun: みみ (mimi) | Contoh: 耳（みみ）= telinga"],
+    ["手","","","tangan","tubuh","On: シュ (shu) | Kun: て (te) | Contoh: 手紙（てがみ）= surat"],
+    ["足","","","kaki","tubuh","On: ソク (soku) | Kun: あし (ashi) | Contoh: 足（あし）= kaki"],
+    
+    // ===== ARAH & POSISI =====
+    ["上","","","atas","arah","On: ジョウ (jou) | Kun: うえ (ue), あがる (agaru) | Contoh: 上手（じょうず）= pandai"],
+    ["下","","","bawah","arah","On: カ (ka), ゲ (ge) | Kun: した (shita) | Contoh: 地下鉄（ちかてつ）= kereta bawah tanah"],
+    ["中","","","tengah, dalam","arah","On: チュウ (chuu) | Kun: なか (naka) | Contoh: 中国（ちゅうごく）= Tiongkok"],
+    ["外","","","luar","arah","On: ガイ (gai), ゲ (ge) | Kun: そと (soto) | Contoh: 外国（がいこく）= luar negeri"],
+    ["右","","","kanan","arah","On: ウ (u), ユウ (yuu) | Kun: みぎ (migi) | Contoh: 右手（みぎて）= tangan kanan"],
+    ["左","","","kiri","arah","On: サ (sa) | Kun: ひだり (hidari) | Contoh: 左手（ひだりて）= tangan kiri"],
+    ["前","","","depan, sebelum","arah","On: ゼン (zen) | Kun: まえ (mae) | Contoh: 名前（なまえ）= nama"],
+    ["後","","","belakang, setelah","arah","On: ゴ (go), コウ (kou) | Kun: うしろ (ushiro), あと (ato) | Contoh: 午後（ごご）= sore / PM"],
+    ["東","","","timur","arah","On: トウ (tou) | Kun: ひがし (higashi) | Contoh: 東京（とうきょう）= Tokyo"],
+    ["西","","","barat","arah","On: セイ (sei), サイ (sai) | Kun: にし (nishi) | Contoh: 関西（かんさい）= Kansai"],
+    ["南","","","selatan","arah","On: ナン (nan) | Kun: みなみ (minami) | Contoh: 南口（みなみぐち）= pintu keluar selatan"],
+    ["北","","","utara","arah","On: ホク (hoku) | Kun: きた (kita) | Contoh: 北海道（ほっかいどう）= Hokkaido"],
+
+    // ===== KELUARGA & ORANG =====
+    ["人","","","orang","Orang","On: ジン (jin), ニン (nin) | Kun: ひと (hito) | Contoh: 日本人（にほんじん）= orang Jepang"],
+    ["子","","","anak","Orang","On: シ (shi), ス (su) | Kun: こ (ko) | Contoh: 女の子（おんなのこ）= anak perempuan"],
+    ["女","","","perempuan","Orang","On: ジョ (jo), ニョ (nyo) | Kun: おんな (onna) | Contoh: 女性（じょせい）= wanita"],
+    ["男","","","laki-laki","Orang","On: ダン (dan), ナン (nan) | Kun: おとこ (otoko) | Contoh: 男の人（おとこのひと）= laki-laki"],
+    ["父","","","ayah","Orang","On: フ (fu) | Kun: ちち (chichi) | Contoh: お父さん（おとうさん）= ayah"],
+    ["母","","","ibu","Orang","On: ボ (bo) | Kun: はは (haha) | Contoh: お母さん（おかあさん）= ibu"],
+    ["兄","","","kakak laki-laki","Orang","On: ケイ (kei), キョウ (kyou) | Kun: あに (ani) | Contoh: お兄さん（おにいさん）= kakak laki-laki"],
+    ["姉","","","kakak perempuan","Orang","On: シ (shi) | Kun: あね (ane) | Contoh: お姉さん（おねえさん）= kakak perempuan"],
+    ["弟","","","adik laki-laki","Orang","On: テイ (tei), ダイ (dai) | Kun: おとうと (otouto) | Contoh: 弟（おとうと）= adik laki-laki"],
+    ["妹","","","adik perempuan","Orang","On: マイ (mai) | Kun: いもうと (imouto) | Contoh: 妹（いもうと）= adik perempuan"],
+    ["友","","","teman","Orang","On: ユウ (yuu) | Kun: とも (tomo) | Contoh: 友達（ともだち）= teman"],
+    ["達","","","mencapai","Orang","On: タツ (tatsu) | Contoh: 友達（ともだち）= teman"],
+    
+    // ===== SEKOLAH & BAHASA =====
+    ["名","","","nama","sekolah","On: メイ (mei), ミョウ (myou) | Kun: な (na) | Contoh: 名前（なまえ）= nama"],
+    ["本","","","buku, asal","sekolah","On: ホン (hon) | Kun: もと (moto) | Contoh: 日本（にほん）= Jepang"],
+    ["語","","","bahasa","sekolah","On: ゴ (go) | Kun: かたる (kataru) | Contoh: 日本語（にほんご）= bahasa Jepang"],
+    ["文","","","kalimat, tulisan","sekolah","On: ブン (bun), モン (mon) | Kun: ふみ (fumi) | Contoh: 作文（さくぶん）= karangan"],
+    ["字","","","huruf","sekolah","On: ジ (ji) | Contoh: 漢字（かんじ）= kanji"],
+    ["学","","","belajar","sekolah","On: ガク (gaku) | Kun: まなぶ (manabu) | Contoh: 学校（がっこう）= sekolah"],
+    ["校","","","sekolah","sekolah","On: コウ (kou) | Contoh: 学校（がっこう）= sekolah"],
+    ["先","","","lebih dulu","sekolah","On: セン (sen) | Kun: さき (saki) | Contoh: 先生（せんせい）= guru"],
+    ["生","","","hidup","sekolah","On: セイ (sei), ショウ (shou) | Kun: いきる (ikiru), うまれる (umareru) | Contoh: 学生（がくせい）= siswa"],
+
+    // ===== TEMPAT & BANGUNAN =====
+    ["何","","","apa","tempat","On: カ (ka) | Kun: なに (nani), なん (nan) | Contoh: 何人（なんにん）= berapa orang"],
+    ["間","","","antara, selang","tempat","On: カン (kan), ケン (ken) | Kun: あいだ (aida) | Contoh: 時間（じかん）= waktu"],
+    ["駅","","","stasiun","tempat","On: エキ (eki) | Contoh: 駅前（えきまえ）= depan stasiun"],
+    ["店","","","toko","tempat","On: テン (ten) | Kun: みせ (mise) | Contoh: 書店（しょてん）= toko buku"],
+    ["会","","","bertemu","tempat","On: カイ (kai), エ (e) | Kun: あう (au) | Contoh: 会社（かいしゃ）= perusahaan"],
+    ["社","","","perusahaan","tempat","On: シャ (sha) | Kun: やしろ (yashiro) | Contoh: 会社（かいしゃ）= perusahaan"],
+    ["寺","","","kuil Buddha","tempat","On: ジ (ji) | Kun: てら (tera) | Contoh: お寺（おてら）= kuil Buddha"],
+    ["館","","","gedung","tempat","On: カン (kan) | Contoh: 図書館（としょかん）= perpustakaan"],
+    ["図","","","gambar, peta","tempat","On: ズ (zu), ト (to) | Contoh: 地図（ちず）= peta"],
+    ["書","","","menulis","tempat","On: ショ (sho) | Kun: かく (kaku) | Contoh: 辞書（じしょ）= kamus"],
+    ["室","","","ruangan","tempat","On: シツ (shitsu) | Kun: むろ (muro) | Contoh: 教室（きょうしつ）= ruang kelas"],
+    ["教","","","mengajar","tempat","On: キョウ (kyou) | Kun: おしえる (oshieru) | Contoh: 教師（きょうし）= guru"],
+    
+    // ===== TRANSPORTASI =====
+    ["電","","","listrik","transportasi","On: デン (den) | Contoh: 電話（でんわ）= telepon"],
+    ["車","","","kendaraan","transportasi","On: シャ (sha) | Kun: くるま (kuruma) | Contoh: 電車（でんしゃ）= kereta listrik"],
+
+    // ===== AKTIVITAS =====
+    ["話","","","berbicara","aktivitas","On: ワ (wa) | Kun: はなす (hanasu), はなし (hanashi) | Contoh: 電話（でんわ）= telepon"],
+    ["言","","","berkata","aktivitas","On: ゲン (gen), ゴン (gon) | Kun: いう (iu) | Contoh: 言葉（ことば）= kata-kata"],
+    ["読","","","membaca","aktivitas","On: ドク (doku) | Kun: よむ (yomu) | Contoh: 読書（どくしょ）= membaca buku"],
+    ["聞","","","mendengar","aktivitas","On: ブン (bun), モン (mon) | Kun: きく (kiku) | Contoh: 新聞（しんぶん）= surat kabar"],
+    ["見","","","melihat","aktivitas","On: ケン (ken) | Kun: みる (miru) | Contoh: 見学（けんがく）= studi lapangan"],
+    ["行","","","pergi","aktivitas","On: コウ (kou), ギョウ (gyou) | Kun: いく (iku), ゆく (yuku) | Contoh: 銀行（ぎんこう）= bank"],
+    ["来","","","datang","aktivitas","On: ライ (rai) | Kun: くる (kuru) | Contoh: 来年（らいねん）= tahun depan"],
+    ["帰","","","pulang","aktivitas","On: キ (ki) | Kun: かえる (kaeru) | Contoh: 帰ります（かえります）= pulang"],
+    ["入","","","masuk","aktivitas","On: ニュウ (nyuu) | Kun: はいる (hairu), いれる (ireru) | Contoh: 入口（いりぐち）= pintu masuk"],
+    ["出","","","keluar","aktivitas","On: シュツ (shutsu) | Kun: でる (deru), だす (dasu) | Contoh: 出口（でぐち）= pintu keluar"],
+    ["立","","","berdiri","aktivitas","On: リツ (ritsu), リュウ (ryuu) | Kun: たつ (tatsu) | Contoh: 立ちます（たちます）= berdiri"],
+    ["休","","","istirahat","aktivitas","On: キュウ (kyuu) | Kun: やすむ (yasumu) | Contoh: 休日（きゅうじつ）= hari libur"],
+    ["気","","","energi, perasaan","aktivitas","On: キ (ki), ケ (ke) | Contoh: 元気（げんき）= sehat"],
+    ["力","","","tenaga","aktivitas","On: リョク (ryoku), リキ (riki) | Kun: ちから (chikara) | Contoh: 電力（でんりょく）= tenaga listrik"],
+
+    // ===== MAKANAN & MINUMAN =====
+    ["食","","","makan","makanan","On: ショク (shoku), ジキ (jiki) | Kun: たべる (taberu) | Contoh: 食堂（しょくどう）= kantin"],
+    ["飲","","","minum","makanan","On: イン (in) | Kun: のむ (nomu) | Contoh: 飲み物（のみもの）= minuman"],
+    ["魚","","","ikan","makanan","On: ギョ (gyo) | Kun: さかな (sakana) | Contoh: 魚（さかな）= ikan"],
+    ["肉","","","daging","makanan","On: ニク (niku) | Contoh: 牛肉（ぎゅうにく）= daging sapi"],
+    ["米","","","beras","makanan","On: ベイ (bei), マイ (mai) | Kun: こめ (kome) | Contoh: 白米（はくまい）= nasi putih"],
+    ["茶","","","teh","makanan","On: チャ (cha), サ (sa) | Contoh: お茶（おちゃ）= teh"],
+
+    // ===== WARNA =====
+    ["白","","","putih","warna","On: ハク (haku), ビャク (byaku) | Kun: しろ (shiro) | Contoh: 白い（しろい）= putih"],
+    ["黒","","","hitam","warna","On: コク (koku) | Kun: くろ (kuro) | Contoh: 黒い（くろい）= hitam"],
+    ["赤","","","merah","warna","On: セキ (seki), シャク (shaku) | Kun: あか (aka) | Contoh: 赤い（あかい）= merah"],
+    ["青","","","biru","warna","On: セイ (sei), ショウ (shou) | Kun: あお (ao) | Contoh: 青い（あおい）= biru"],
+
+    // ===== SIFAT & KETERANGAN =====
+    ["高","","","tinggi, mahal","sifat","On: コウ (kou) | Kun: たかい (takai) | Contoh: 高校（こうこう）= SMA"],
+    ["安","","","murah, aman","sifat","On: アン (an) | Kun: やすい (yasui) | Contoh: 安い（やすい）= murah"],
+    ["長","","","panjang, ketua","sifat","On: チョウ (chou) | Kun: ながい (nagai) | Contoh: 社長（しゃちょう）= direktur perusahaan"],
+    ["国","","","negara","sifat","On: コク (koku) | Kun: くに (kuni) | Contoh: 外国（がいこく）= luar negeri"]
+]
+};
+/* ==========================
+   🔧 Normalisasi Kategori & Arti (Auto-Ringkas)
+   ========================== */
+for (const [bab, arr] of Object.entries(semuaBab)) {
+  semuaBab[bab] = arr.map(([kana, kanji, romaji, arti, kat, analisis]) => {
+    // --- Normalisasi kategori ---
+    let katFix = (kat || "").toLowerCase();
+    if (katFix.includes("benda")) katFix = "kata benda";
+    else if (katFix.includes("kerja")) katFix = "kata kerja";
+    else if (katFix.includes("sifat") && katFix.includes("i")) katFix = "kata sifat-i";
+    else if (katFix.includes("sifat") && katFix.includes("na")) katFix = "kata sifat-na";
+    else if (katFix.includes("tanya")) katFix = "kata tanya";
+    else if (katFix.includes("keterangan")) katFix = "kata keterangan";
+    else if (katFix === "") katFix = "-";
+
+    // --- Ringkas arti ---
+    let artiFix = arti || "";
+    if (artiFix.includes(".")) artiFix = artiFix.split(".")[0]; // ambil kalimat pertama
+    artiFix = artiFix.split(" ").slice(0, 4).join(" "); // ambil 4 kata pertama
+
+    return [kana, kanji, romaji, artiFix.trim(), katFix.trim(), analisis];
+  });
+}
+
+/* ==========================
+   🧠 Preview Hasil Normalisasi (Console)
+   ========================== */
+console.groupCollapsed("📘 Hasil Normalisasi Kosakata Minna no Nihongo");
+for (const [bab, arr] of Object.entries(semuaBab)) {
+  if (!arr.length) continue; // skip bab kosong
+  console.groupCollapsed(`Bab ${bab} (${arr.length} kosakata)`);
+  console.table(arr.map(([kana, kanji, romaji, arti, kat]) => ({
+    Kana: kana,
+    Kanji: kanji,
+    Romaji: romaji,
+    Arti: arti,
+    Kategori: kat
+  })));
+  console.groupEnd();
+}
+console.groupEnd();
+/* ==========================
+   LOGIKA UMUM
+   ========================== */
+let currentLesson=1;
+let data=semuaBab[1]||[];
+let order=[],known=new Set();let index=0;
+
+const $=s=>document.querySelector(s);
+const els={lesson:$('#lesson'),filter:$('#filter'),onlyUnknown:$('#onlyUnknown'),
+card:$('#card'),front:$('#front'),back:$('#back'),
+jpFront:$('#jpFront'),romajiFront:$('#romajiFront'),
+meaningBack:$('#meaningBack'),kanjiBack:$('#kanjiBack'),
+btnPrev:$('#btnPrev'),btnNext:$('#btnNext'),btnKnown:$('#btnKnown'),
+btnShuffle:$('#btnShuffle'),btnResetKnown:$('#btnResetKnown'),
+btnResetProgress:$('#btnResetProgress'),bar:$('#bar'),
+count:$('#count'),knownCount:$('#knownCount'),
+badgeCat:$('#badgeCat'),badgeKnown:$('#badgeKnown')};
+
+function storageKey(base){return`mnn${currentLesson}_${base}`;}
+
+function initLesson(){
+  data = semuaBab[currentLesson] || [];
+  order=[...data.keys()];
+  const knownRaw=localStorage.getItem(storageKey('known'));
+  known=new Set(knownRaw?JSON.parse(knownRaw):[]);
+  index=Math.min(Number(localStorage.getItem(storageKey('idx'))||0),order.length-1);
+  const cats=[...new Set(data.map(d=>d[4]))];
+  els.filter.innerHTML='<option value="all">Semua</option>'+cats.map(c=>`<option value="${c}">${c[0].toUpperCase()+c.slice(1)}</option>`).join('');
+  render();
+}
+
+function saveKnown(){localStorage.setItem(storageKey('known'),JSON.stringify([...known]));}
+function saveIdx(){localStorage.setItem(storageKey('idx'),String(index));}
+function updateKnownCount(){els.knownCount.textContent=known.size;}
+
+function pool(){
+ const cat=els.filter.value,only=els.onlyUnknown?.checked;
+ const arr=order.filter(i=>(cat==='all'||data[i][4]===cat)&&(!only||!known.has(i)));
+ return arr.length?arr:order.filter(i=>(cat==='all'||data[i][4]===cat));
+}
+
+function render(){
+ if(!data.length){els.jpFront.textContent='(Kosong)';els.romajiFront.textContent='';
+ els.meaningBack.textContent='';return;}
+ const p=pool();let gid=order[index];
+ if(!p.includes(gid)){gid=p[0];index=order.indexOf(gid);}
+ const [kana,kanji,romaji,arti,kat,analisis]=data[gid];
+
+els.jpFront.textContent=kana;
+els.romajiFront.textContent=romaji;
+els.meaningBack.textContent=arti;
+
+// GANTI BAGIAN INI
+const isKanjiLesson = els.lesson.value === "26";
+
+if(isKanjiLesson){
+
+    if(kanji || analisis){
+        els.kanjiBack.style.display='';
+
+        const analisisHtml = (analisis || '').replace(/\|/g,'<br>');
+
+        if(kanji && analisis){
+            els.kanjiBack.innerHTML=`Kanji: ${kanji}<br>${analisisHtml}`;
+        }else if(kanji){
+            els.kanjiBack.innerHTML=`Kanji: ${kanji}`;
+        }else{
+            els.kanjiBack.innerHTML=analisisHtml;
+        }
+    }else{
+        els.kanjiBack.style.display='none';
+        els.kanjiBack.innerHTML='';
+    }
+
+}else{
+
+    // Bab 1–25 tidak mengubah karakter |
+    if(kanji && analisis){
+        els.kanjiBack.style.display='';
+        els.kanjiBack.innerHTML=`Kanji: ${kanji} = ${analisis}`;
+    }else{
+        els.kanjiBack.style.display='none';
+        els.kanjiBack.innerHTML='';
+    }
+
+}
+// SAMPAI SINI
+
+els.badgeCat.textContent=(kat||'-').toUpperCase();
+ 
+ els.badgeKnown.classList.toggle('show',known.has(gid));
+ els.front.style.display='';els.back.style.display='none';
+ const pos=p.indexOf(gid);els.count.textContent=`Kartu ${pos+1}/${p.length}`;
+ els.bar.style.width=`${((pos+1)/p.length)*100}%`;updateKnownCount();
+}
+
+function flip(){
+ const showBack=els.back.style.display==='none';
+ els.back.style.display=showBack?'':'none';els.front.style.display=showBack?'none':'';
+}
+function toggleKnown(){const gid=order[index];
+ if(known.has(gid))known.delete(gid);else known.add(gid);
+ saveKnown();render();}
+const ANIM_MS=220;let isAnimating=false;
+function go(dir){
+  if(isAnimating) return;
+  const p = pool();
+  const gid = order[index];
+  let pos = p.indexOf(gid);
+  if (pos === -1) pos = 0;
+
+  let targetIndex = pos;
+  if (dir === 'next' && pos < p.length - 1) targetIndex = pos + 1;
+  if (dir === 'prev' && pos > 0) targetIndex = pos - 1;
+
+  // 🛑 stop di batas: kalau targetIndex sama dengan pos, jangan animasi
+  if (targetIndex === pos) return;
+
+  const t = p[targetIndex];
+  if (t == null) return;
+
+  // lanjut animasi seperti biasa
+  isAnimating = true;
+  els.card.classList.remove('anim-in-left','anim-in-right','anim-out-left','anim-out-right');
+  els.card.offsetWidth;
+
+  els.card.classList.add(dir === 'next' ? 'anim-out-left' : 'anim-out-right');
+  setTimeout(() => {
+    index = order.indexOf(t);
+    if (index < 0) index = 0;
+    saveIdx();
+    render();
+
+    els.card.classList.remove('anim-out-left','anim-out-right');
+    els.card.offsetWidth;
+    els.card.classList.add(dir === 'next' ? 'anim-in-right' : 'anim-in-left');
+
+    setTimeout(() => {
+      els.card.classList.remove('anim-in-left','anim-in-right');
+      isAnimating = false;
+    }, ANIM_MS);
+  }, ANIM_MS);
+}
+function next(){go('next');}
+function prev(){go('prev');}
+
+els.btnNext.onclick=next;
+els.btnPrev.onclick=prev;
+els.btnKnown.onclick=toggleKnown;
+els.btnShuffle.onclick=()=>{order=[...order].sort(()=>Math.random()-.5);render();};
+els.btnResetKnown.onclick=()=>{if(confirm('Hapus semua penanda hafal bab ini?')){known.clear();saveKnown();render();}};
+els.btnResetProgress.onclick=()=>{index=0;saveIdx();render();};
+
+/* Gestur */
+let sx=0,sy=0,t0=0,last=0;
+els.card.addEventListener('touchstart',e=>{const t=e.changedTouches[0];sx=t.clientX;sy=t.clientY;t0=Date.now();},{passive:true});
+els.card.addEventListener('touchend',e=>{
+ const t=e.changedTouches[0];const dx=t.clientX-sx,dy=t.clientY-sy,dt=Date.now()-t0;
+ const now=Date.now();if(now-last<250){toggleKnown();last=0;return;}last=now;
+ if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)){dx<0?next():prev();return;}
+ if(dt<300&&Math.abs(dx)<10&&Math.abs(dy)<10){flip();}
+},{passive:true});
+
+/* Ganti bab */
+els.lesson.onchange=()=>{currentLesson=Number(els.lesson.value);initLesson();};
+els.filter.onchange = () => {
+  index = 0; // reset ke kartu pertama
+  render();  // tampilkan ulang sesuai kategori baru
+};
+
+/* ✅ Pastikan saat pertama kali halaman dibuka, currentLesson sudah terset dan langsung panggil initLesson() */
+window.addEventListener('DOMContentLoaded',()=>{currentLesson=Number(els.lesson.value);initLesson();});
+</script>
+</body>
+
+</html>
+
+
+
+
+
